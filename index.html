@@ -1235,6 +1235,14 @@ footer{
 .nyx-card .roxie-name{font-size:30px}
 @media (prefers-reduced-motion:reduce){.roxie-frame{--vox:.35!important}}
 
+.page-id{display:flex;align-items:center;gap:10px;min-width:0}
+.page-avatar{width:44px;height:44px;border-radius:50%;flex:0 0 auto;overflow:hidden;border:2px solid #e4c56b;box-shadow:0 0 14px rgba(255,67,139,.35)}
+.page-avatar picture,.page-avatar img{display:block;width:100%;height:100%;object-fit:cover}
+/* Ronnie's floating Quick lines button steps aside while Roxie's section is on screen. */
+body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translateY(12px)}
+.ronnie-fab{transition:opacity .25s ease,transform .25s ease}
+@media (prefers-reduced-motion:reduce){.page-avatar{box-shadow:none}}
+
 </style>
 </head>
 <body>
@@ -1353,7 +1361,7 @@ footer{
           <div class="roxie-body">
             <p class="eyebrow">Quote pages · Instagram</p>
             <h3 id="roxie-name" class="roxie-name">Roxie</h3>
-            <p class="roxie-tagline">Your sassy, grown bestie for quote posts. She brainstorms hooks, captions and hashtags in each page's own voice. Drafts only: you post everything yourself.</p>
+            <p class="roxie-tagline">Your unhinged, filthy-minded bestie with zero filter and a group chat full of bad decisions, cooking up drafts you post yourself.</p>
             <div class="roxie-actions">
               <button type="button" class="btn-gold" id="roxie-talk-live" aria-pressed="false">Talk to Roxie live</button>
               <span id="roxie-live-status" class="ronnie-live-status" hidden aria-live="polite"></span>
@@ -1363,7 +1371,7 @@ footer{
           <div class="page-pair">
             <section class="page-tile freak-tile" aria-label="THE FREAKQUENCY example">
               <header>
-                <div><h4>THE FREAKQUENCY 🍒</h4><div class="page-meta">Hosted by Roxie Monroe (AI) · Instagram</div></div>
+                <div class="page-id"><span class="page-avatar"><picture><source type="image/webp" srcset="assets/roxie-avatar.webp"><img src="assets/roxie-avatar.jpg" alt="AI-generated Roxie" width="128" height="128" loading="lazy" decoding="async"></picture></span><div><h4>THE FREAKQUENCY 🍒</h4><div class="page-meta">Hosted by Roxie Monroe (AI) · Instagram</div></div></div>
                 <span class="example-chip">Example draft</span>
               </header>
               <div class="freak-post">
@@ -1506,15 +1514,15 @@ footer{
 </aside>
 
 <div class="ronnie-clip-bank" aria-hidden="true">
-  <audio id="clip-greet" preload="auto" src="assets/voice/greet.mp3"></audio>
-  <audio id="clip-waiting" preload="auto" src="assets/voice/waiting.mp3"></audio>
-  <audio id="clip-empty" preload="auto" src="assets/voice/empty.mp3"></audio>
-  <audio id="clip-done" preload="auto" src="assets/voice/done.mp3"></audio>
-  <audio id="clip-tasks" preload="auto" src="assets/voice/tasks.mp3"></audio>
-  <audio id="clip-hype1" preload="auto" src="assets/voice/hype1.mp3"></audio>
-  <audio id="clip-hype2" preload="auto" src="assets/voice/hype2.mp3"></audio>
-  <audio id="clip-hype3" preload="auto" src="assets/voice/hype3.mp3"></audio>
-  <audio id="clip-hype4" preload="auto" src="assets/voice/hype4.mp3"></audio>
+  <audio id="clip-greet" preload="auto" src="assets/voice/greet.mp3?v=grok1"></audio>
+  <audio id="clip-waiting" preload="auto" src="assets/voice/waiting.mp3?v=grok1"></audio>
+  <audio id="clip-empty" preload="auto" src="assets/voice/empty.mp3?v=grok1"></audio>
+  <audio id="clip-done" preload="auto" src="assets/voice/done.mp3?v=grok1"></audio>
+  <audio id="clip-tasks" preload="auto" src="assets/voice/tasks.mp3?v=grok1"></audio>
+  <audio id="clip-hype1" preload="auto" src="assets/voice/hype1.mp3?v=grok1"></audio>
+  <audio id="clip-hype2" preload="auto" src="assets/voice/hype2.mp3?v=grok1"></audio>
+  <audio id="clip-hype3" preload="auto" src="assets/voice/hype3.mp3?v=grok1"></audio>
+  <audio id="clip-hype4" preload="auto" src="assets/voice/hype4.mp3?v=grok1"></audio>
 </div>
 
 
@@ -3036,6 +3044,13 @@ function setupSquad(){
   const btn = $("roxie-talk-live");
   if(btn) btn.addEventListener("click", () => { startLiveRoxie(); });
   window.addEventListener("pagehide", () => { if(isRoxieLive()) endLiveRoxie(); });
+  const squad = document.querySelector(".squad");
+  if(squad && "IntersectionObserver" in window){
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => document.body.classList.toggle("squad-in-view", e.isIntersecting));
+    }, { threshold: 0.12 });
+    io.observe(squad);
+  }
 }
 window.__roxie = { start: startLiveRoxie, end: endLiveRoxie, state: () => ({ roxieStatus, roxie: !!roxieConversation, ronnie: !!liveConversation }) };
 
