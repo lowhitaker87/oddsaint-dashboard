@@ -30,7 +30,6 @@
   font-style:italic;
   font-display:swap;
 }
-
 /* Oddsaint royal prototype — fonts and assets are local. The only remote script is the official ElevenLabs conversational widget. */
 :root{
   color-scheme:dark;
@@ -326,20 +325,39 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   overflow:hidden;
   clip-path:none;
 }
+.cinema-frame .hero-ambience{
+  display:none;
+  position:absolute;
+  inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:33% 16%;
+  filter:blur(22px) saturate(1.08) brightness(.78);
+  transform:scale(1.18);
+  transform-origin:33% 18%;
+  pointer-events:none;
+  user-select:none;
+}
 .cinema-frame .hero-media{
   position:absolute;inset:0;
   width:100%;height:100%;
   object-fit:cover;
-  object-position:center 20%;
+  object-position:8% 14%;
   display:block;
   background:#1a1228;
   animation:kenburns 22s ease-in-out infinite alternate;
-  transform-origin:center 18%;
+  transform-origin:33% 18%;
 }
 .cinema-frame .hero-still{display:none}
 @keyframes kenburns{
   from{transform:scale(1)}
-  to{transform:scale(1.08)}
+  to{transform:scale(1.025)}
+}
+.cinema-arch::after{
+  content:"";
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 80% 75% at 33% 28%,transparent 52%,rgba(16,8,24,.38) 100%);
+  box-shadow:inset 0 0 90px 18px rgba(10,6,18,.28);
 }
 .cinema-glow{
   position:absolute;pointer-events:none;z-index:2;
@@ -465,6 +483,42 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   .cinema-credit{padding-right:72px}
 }
 
+@media (min-width:700px) and (max-width:1023px){
+  .cinema-frame .hero-ambience{
+    display:block;
+    z-index:0;
+    filter:blur(52px) saturate(.55) brightness(.22);
+    transform:scale(1.55);
+    object-position:82% 28%;
+  }
+  .cinema-arch{
+    inset:auto;
+    left:50%;
+    top:5%;
+    width:min(420px, 56vw);
+    aspect-ratio:344/480;
+    height:auto;
+    translate:-50% 0;
+    border-radius:40% 40% 22px 22px / 13% 13% 22px 22px;
+    box-shadow:0 0 0 3px #e4c56b,0 0 0 4px rgba(255,244,204,.2),0 0 48px rgba(228,197,107,.32),0 24px 70px rgba(10,6,18,.55);
+    z-index:1;
+  }
+  .cinema-frame .hero-media{
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:50% 6%;
+    background:#1a1228;
+    transform-origin:50% 20%;
+  }
+  .cinema-arch::after{
+    background:radial-gradient(ellipse 85% 80% at 50% 36%,transparent 55%,rgba(10,6,18,.4) 100%);
+    box-shadow:inset 0 0 70px 14px rgba(10,6,18,.28);
+    border-radius:inherit;
+  }
+}
+
 @media (min-width:1024px){
   .page-top{background:var(--bg)}
   .cinema-hero{color:var(--text)}
@@ -496,6 +550,12 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   .cinema-frame{
     position:relative;
     inset:auto;
+    width:min(400px,100%);
+    max-height:calc(100% - 36px);
+    aspect-ratio:344/480;
+    height:auto;
+    align-self:center;
+    justify-self:center;
     margin:12px 22px 22px 8px;
     border-radius:42% 42% 28px 28px / 14% 14% 28px 28px;
     box-shadow:var(--shadow),0 0 80px rgba(168,85,255,.2),0 0 60px rgba(228,197,107,.18);
@@ -504,6 +564,16 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
     inset:7px;
     border-radius:40% 40% 22px 22px / 13% 13% 22px 22px;
     clip-path:none;
+  }
+  .cinema-frame .hero-media{
+    object-fit:cover;
+    object-position:50% 6%;
+    transform-origin:50% 20%;
+  }
+  .cinema-arch::after{
+    background:radial-gradient(ellipse 85% 80% at 50% 36%,transparent 55%,rgba(10,6,18,.4) 100%);
+    box-shadow:inset 0 0 70px 14px rgba(10,6,18,.28);
+    border-radius:inherit;
   }
   .cinema-frame::after{
     inset:0;
@@ -1066,13 +1136,14 @@ body.ronnie-live-on elevenlabs-convai{
       </div>
 
       <figure class="cinema-frame" id="cinema-frame">
+        <img class="hero-ambience" src="assets/ronnie-welcome-poster.jpg" alt="" aria-hidden="true" width="344" height="480">
         <div class="cinema-glow purple" aria-hidden="true"></div>
         <div class="cinema-glow gold" aria-hidden="true"></div>
         <div class="cinema-arch">
-          <video id="ronnie-hero-video" class="hero-media" autoplay muted loop playsinline poster="assets/ronnie-welcome-poster.jpg" width="720" height="486" aria-label="AI-generated hostess Ronnie welcoming you at the doorway of a luxury foyer">
+          <video id="ronnie-hero-video" class="hero-media" autoplay muted loop playsinline poster="assets/ronnie-welcome-poster.jpg" width="344" height="480" aria-label="AI-generated hostess Ronnie welcoming you at the doorway of a luxury foyer">
             <source src="assets/ronnie-welcome.mp4" type="video/mp4">
           </video>
-          <img id="ronnie-hero-still" class="hero-media hero-still" src="assets/ronnie-welcome-poster.jpg" alt="AI-generated hostess Ronnie welcoming you at the doorway of a luxury foyer" width="720" height="486">
+          <img id="ronnie-hero-still" class="hero-media hero-still" src="assets/ronnie-welcome-poster.jpg" alt="AI-generated hostess Ronnie welcoming you at the doorway of a luxury foyer" width="344" height="480">
         </div>
         <span class="hero-frame-corner tl" aria-hidden="true"></span>
         <span class="hero-frame-corner tr" aria-hidden="true"></span>
