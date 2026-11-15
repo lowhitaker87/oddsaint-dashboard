@@ -342,12 +342,19 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   position:absolute;inset:0;
   width:100%;height:100%;
   object-fit:cover;
-  object-position:8% 14%;
+  object-position:0% 14%;
   display:block;
   background:#1a1228;
   animation:kenburns 22s ease-in-out infinite alternate;
-  transform-origin:33% 18%;
+  transform-origin:26% 18%;
 }
+.cinema-frame .hero-talking{
+  opacity:0;
+  z-index:1;
+  transition:opacity 320ms ease;
+  pointer-events:none;
+}
+.cinema-frame.is-speaking .hero-talking{opacity:1}
 .cinema-frame .hero-still{display:none}
 @keyframes kenburns{
   from{transform:scale(1)}
@@ -452,6 +459,27 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   font-size:15px;
 }
 .cinema-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.ronnie-live-status{
+  display:none;
+  align-items:center;
+  gap:8px;
+  min-height:40px;
+  padding:6px 14px;
+  border-radius:999px;
+  border:1px solid rgba(228,197,107,.55);
+  background:rgba(20,10,34,.55);
+  color:#f3e0a6;
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  box-shadow:0 0 18px rgba(228,197,107,.18);
+}
+.ronnie-live-status:not([hidden]){display:inline-flex}
+[data-theme="light"] .ronnie-live-status{
+  background:rgba(255,248,234,.8);
+  color:#6e4e0e;
+  border-color:rgba(168,130,40,.45);
+}
 .cinema-cta{
   min-height:52px;
   padding:12px 22px;
@@ -494,10 +522,12 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   .cinema-arch{
     inset:auto;
     left:50%;
-    top:5%;
-    width:min(420px, 56vw);
-    aspect-ratio:344/480;
-    height:auto;
+    top:3%;
+    width:auto;
+    max-width:min(560px, 64vw);
+    max-height:58%;
+    aspect-ratio:774/1080;
+    height:58%;
     translate:-50% 0;
     border-radius:40% 40% 22px 22px / 13% 13% 22px 22px;
     box-shadow:0 0 0 3px #e4c56b,0 0 0 4px rgba(255,244,204,.2),0 0 48px rgba(228,197,107,.32),0 24px 70px rgba(10,6,18,.55);
@@ -550,10 +580,10 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   .cinema-frame{
     position:relative;
     inset:auto;
-    width:min(400px,100%);
-    max-height:calc(100% - 36px);
-    aspect-ratio:344/480;
-    height:auto;
+    width:auto;
+    height:min(1080px, calc(100% - 36px));
+    max-width:min(774px,100%);
+    aspect-ratio:774/1080;
     align-self:center;
     justify-self:center;
     margin:12px 22px 22px 8px;
@@ -1061,21 +1091,6 @@ footer{
 #hear-ronnie{flex:1 1 100%}
 #read-details,#ronnie-mic{flex:1 1 calc(50% - 8px)}
 
-elevenlabs-convai{
-  position:fixed;
-  left:16px;
-  right:auto;
-  bottom:max(16px, env(safe-area-inset-bottom));
-  z-index:44;
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-}
-body.ronnie-live-on elevenlabs-convai{
-  opacity:1;
-  visibility:visible;
-  pointer-events:auto;
-}
 </style>
 </head>
 <body>
@@ -1136,14 +1151,17 @@ body.ronnie-live-on elevenlabs-convai{
       </div>
 
       <figure class="cinema-frame" id="cinema-frame">
-        <img class="hero-ambience" src="assets/ronnie-welcome-poster.jpg" alt="" aria-hidden="true" width="344" height="480">
+        <img class="hero-ambience" src="assets/ronnie-idle-poster.jpg" alt="" aria-hidden="true" width="774" height="1080">
         <div class="cinema-glow purple" aria-hidden="true"></div>
         <div class="cinema-glow gold" aria-hidden="true"></div>
         <div class="cinema-arch">
-          <video id="ronnie-hero-video" class="hero-media" autoplay muted loop playsinline poster="assets/ronnie-welcome-poster.jpg" width="344" height="480" aria-label="AI-generated hostess Ronnie welcoming you at the doorway of a luxury foyer">
-            <source src="assets/ronnie-welcome.mp4" type="video/mp4">
+          <video id="ronnie-hero-idle" class="hero-media hero-idle" autoplay muted loop playsinline poster="assets/ronnie-idle-poster.jpg" width="774" height="1080" aria-label="AI-generated hostess Ronnie waiting at the doorway of a luxury foyer">
+            <source src="assets/ronnie-idle.mp4" type="video/mp4">
           </video>
-          <img id="ronnie-hero-still" class="hero-media hero-still" src="assets/ronnie-welcome-poster.jpg" alt="AI-generated hostess Ronnie welcoming you at the doorway of a luxury foyer" width="344" height="480">
+          <video id="ronnie-hero-talking" class="hero-media hero-talking" muted loop playsinline preload="auto" poster="assets/ronnie-talking-poster.jpg" width="774" height="1080" aria-hidden="true">
+            <source src="assets/ronnie-talking.mp4" type="video/mp4">
+          </video>
+          <img id="ronnie-hero-still" class="hero-media hero-still" src="assets/ronnie-idle-poster.jpg" data-idle-src="assets/ronnie-idle-poster.jpg" data-talking-src="assets/ronnie-talking-poster.jpg" alt="AI-generated hostess Ronnie at the doorway of a luxury foyer" width="774" height="1080">
         </div>
         <span class="hero-frame-corner tl" aria-hidden="true"></span>
         <span class="hero-frame-corner tr" aria-hidden="true"></span>
@@ -1158,7 +1176,8 @@ body.ronnie-live-on elevenlabs-convai{
         <p class="cinema-tagline">Welcome home, Queen. Your royal bestie is at the door.</p>
         <p class="cinema-lead">A little vision. A lot of possibility. Talk with her live, or play a quick line while you review example work below.</p>
         <div class="cinema-actions">
-          <button type="button" class="btn-gold cinema-cta" id="talk-live">Talk to Ronnie live</button>
+          <button type="button" class="btn-gold cinema-cta" id="talk-live" aria-pressed="false">Talk to Ronnie live</button>
+          <span id="ronnie-live-status" class="ronnie-live-status" hidden aria-live="polite"></span>
           <button type="button" class="btn-ghost" id="quick-lines" aria-controls="ronnie-panel" aria-expanded="false">Quick lines</button>
         </div>
         <p class="cinema-credit">Live conversations use your ElevenLabs credits per minute. She isn't connected to the example agents on this dashboard.</p>
@@ -1288,17 +1307,7 @@ body.ronnie-live-on elevenlabs-convai{
 </div>
 
 
-<elevenlabs-convai
-  id="ronnie-live-widget"
-  agent-id="agent_3101m7g4sdggfqbth86ra3hjkawx"
-  avatar-image-url="https://lowhitaker87.github.io/oddsaint-dashboard/assets/host-avatar.jpg"
-  action-text="Talk to Ronnie live"
-  start-call-text="Talk to Ronnie live"
-  end-call-text="End call"
-  listening-text="Listening…"
-  speaking-text="Ronnie is speaking"
-></elevenlabs-convai>
-<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+<script src="https://unpkg.com/@elevenlabs/client@1.36.1/dist/lib.iife.js"></script>
 
 <div id="modal-root"></div>
 <script>
@@ -1976,11 +1985,59 @@ function fillVoicePicker(){
   selectedVoiceURI = select.value;
 }
 
+let heroTalkTimer = null;
+
+function prefersReducedMotion(){
+  return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+}
+
+function setHeroSpeaking(on){
+  const idle = $("ronnie-hero-idle");
+  const talking = $("ronnie-hero-talking");
+  const still = $("ronnie-hero-still");
+  if(heroTalkTimer){
+    clearTimeout(heroTalkTimer);
+    heroTalkTimer = null;
+  }
+  if(prefersReducedMotion()){
+    if(still){
+      const idleSrc = still.getAttribute("data-idle-src") || "assets/ronnie-idle-poster.jpg";
+      const talkSrc = still.getAttribute("data-talking-src") || "assets/ronnie-talking-poster.jpg";
+      still.src = on ? talkSrc : idleSrc;
+      still.style.display = "block";
+    }
+    [idle, talking].forEach((video) => {
+      if(!video) return;
+      try{ video.pause(); }catch(e){}
+      video.setAttribute("hidden", "");
+    });
+    return;
+  }
+  if(on && talking){
+    try{
+      const duration = talking.duration;
+      if(duration && isFinite(duration) && duration > 1){
+        talking.currentTime = Math.random() * Math.max(0.2, duration - 0.8);
+      }else{
+        talking.currentTime = 0;
+      }
+    }catch(e){}
+    const playPromise = talking.play();
+    if(playPromise && playPromise.catch) playPromise.catch(() => {});
+  }else if(talking){
+    heroTalkTimer = setTimeout(() => {
+      try{ talking.pause(); }catch(e){}
+    }, 360);
+  }
+}
+
 function setSpeaking(on){
   $("talk-avatar-wrap") && $("talk-avatar-wrap").classList.toggle("is-speaking", !!on);
   $("fab-avatar-wrap") && $("fab-avatar-wrap").classList.toggle("is-speaking", !!on);
   $("cinema-frame") && $("cinema-frame").classList.toggle("is-speaking", !!on);
+  setHeroSpeaking(on);
 }
+window.__setRonnieSpeaking = setSpeaking;
 
 function clipElements(){
   return CLIP_IDS.map((id) => $("clip-" + id)).filter(Boolean);
@@ -2233,22 +2290,34 @@ function setupMic(){
 }
 
 function setupHeroMotion(){
-  const video = $("ronnie-hero-video");
+  const idle = $("ronnie-hero-idle");
+  const talking = $("ronnie-hero-talking");
   const still = $("ronnie-hero-still");
-  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if(!video || !still) return;
-  if(reduce){
-    video.pause();
-    video.removeAttribute("autoplay");
-    video.setAttribute("hidden", "");
-    still.style.display = "block";
+  if(prefersReducedMotion()){
+    [idle, talking].forEach((video) => {
+      if(!video) return;
+      try{ video.pause(); }catch(e){}
+      video.removeAttribute("autoplay");
+      video.setAttribute("hidden", "");
+    });
+    if(still) still.style.display = "block";
+    return;
+  }
+  if(idle){
+    const playPromise = idle.play();
+    if(playPromise && playPromise.catch) playPromise.catch(() => {});
   }
 }
 
-
-function getLiveWidget(){
-  return document.getElementById("ronnie-live-widget");
-}
+const RONNIE_AGENT_ID = "agent_3101m7g4sdggfqbth86ra3hjkawx";
+const LIVE_STATUS_LABELS = {
+  connecting: "Connecting",
+  listening: "Listening",
+  speaking: "Ronnie is talking"
+};
+let liveConversation = null;
+let liveStarting = false;
+let liveStatus = "";
 
 function setLiveFrame(on){
   const frame = $("cinema-frame");
@@ -2256,49 +2325,108 @@ function setLiveFrame(on){
   document.body.classList.toggle("ronnie-live-on", !!on);
 }
 
-function startLiveRonnie(){
-  const widget = getLiveWidget();
-  if(!widget){
+function setLiveStatus(status){
+  liveStatus = status || "";
+  const pill = $("ronnie-live-status");
+  const button = $("talk-live");
+  if(pill){
+    if(!status){
+      pill.hidden = true;
+      pill.textContent = "";
+    }else{
+      pill.hidden = false;
+      pill.textContent = LIVE_STATUS_LABELS[status] || status;
+    }
+  }
+  if(button){
+    const live = !!status;
+    button.textContent = live ? "End chat" : "Talk to Ronnie live";
+    button.setAttribute("aria-pressed", live ? "true" : "false");
+  }
+}
+
+function resetLiveUi(){
+  liveConversation = null;
+  liveStarting = false;
+  setLiveFrame(false);
+  setSpeaking(false);
+  setLiveStatus("");
+}
+
+async function endLiveRonnie(){
+  const conversation = liveConversation;
+  liveConversation = null;
+  liveStarting = false;
+  try{
+    if(conversation && typeof conversation.endSession === "function"){
+      await conversation.endSession();
+    }
+  }catch(err){
+    console.warn("Ronnie live chat could not end.", err);
+  }
+  setLiveFrame(false);
+  setSpeaking(false);
+  setLiveStatus("");
+}
+
+async function startLiveRonnie(){
+  if(liveConversation || liveStarting){
+    await endLiveRonnie();
     return;
   }
-  const start = () => {
-    try{
-      if(typeof widget.startConversation === "function"){
-        widget.startConversation();
-        return;
+  const Conversation = window.ElevenLabsClient && window.ElevenLabsClient.Conversation;
+  if(!Conversation || typeof Conversation.startSession !== "function"){
+    console.warn("Ronnie live chat could not start. The ElevenLabs client did not load.");
+    return;
+  }
+  liveStarting = true;
+  setLiveFrame(true);
+  setLiveStatus("connecting");
+  try{
+    liveConversation = await Conversation.startSession({
+      agentId: RONNIE_AGENT_ID,
+      onConnect: () => {
+        setLiveFrame(true);
+        if(liveStatus === "connecting") setLiveStatus("listening");
+      },
+      onDisconnect: () => {
+        resetLiveUi();
+      },
+      onModeChange: (event) => {
+        const mode = event && event.mode;
+        if(mode === "speaking"){
+          setLiveStatus("speaking");
+          setSpeaking(true);
+        }else if(mode === "listening"){
+          setLiveStatus("listening");
+          setSpeaking(false);
+        }
+      },
+      onStatusChange: (event) => {
+        const status = event && event.status;
+        if(status === "connecting") setLiveStatus("connecting");
+        else if(status === "connected" && liveStatus === "connecting") setLiveStatus("listening");
+        else if(status === "disconnected") resetLiveUi();
+      },
+      onError: (message) => {
+        console.warn("Ronnie live chat error.", message);
       }
-      const startBtn = widget.shadowRoot && widget.shadowRoot.querySelector("button");
-      if(startBtn) startBtn.click();
-    }catch(err){
-      console.warn("Ronnie live chat could not start.", err);
-    }
-  };
-  if(window.customElements && customElements.get("elevenlabs-convai")){
-    start();
-  }else if(window.customElements && customElements.whenDefined){
-    customElements.whenDefined("elevenlabs-convai").then(start).catch(() => start());
-  }else{
-    start();
+    });
+    liveStarting = false;
+    if(liveStatus === "connecting") setLiveStatus("listening");
+  }catch(err){
+    resetLiveUi();
+    console.warn("Ronnie live chat could not start.", err);
   }
 }
 
 function setupLiveRonnie(){
   const cta = $("talk-live");
-  if(cta) cta.addEventListener("click", startLiveRonnie);
-  const widget = getLiveWidget();
-  if(!widget) return;
-  const onStart = () => setLiveFrame(true);
-  const onEnd = () => { setLiveFrame(false); setSpeaking(false); };
-  const onSpeak = () => setSpeaking(true);
-  const onSilent = () => setSpeaking(false);
-  widget.addEventListener("conversationStarted", onStart);
-  widget.addEventListener("conversationEnded", onEnd);
-  widget.addEventListener("agentStartSpeaking", onSpeak);
-  widget.addEventListener("agentEndSpeaking", onSilent);
-  widget.addEventListener("modeChange", (event) => {
-    const mode = event && event.detail && (event.detail.mode || event.detail);
-    if(mode === "speaking") onSpeak();
-    else if(mode === "listening" || mode === "idle") onSilent();
+  if(cta) cta.addEventListener("click", () => {
+    startLiveRonnie();
+  });
+  window.addEventListener("pagehide", () => {
+    if(liveConversation) endLiveRonnie();
   });
 }
 
