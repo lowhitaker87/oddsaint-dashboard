@@ -348,13 +348,43 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   animation:kenburns 22s ease-in-out infinite alternate;
   transform-origin:26% 18%;
 }
-.cinema-frame .hero-talking{
-  opacity:0;
+/* Speaking pose: one still frame from the idle clip plus two mouth layers (mid, open)
+   that fade in with Ronnie's real voice level. No baked-in lip motion. */
+.cinema-frame{--vox:0;--aura-1:243,224,166;--aura-2:228,197,107;--aura-3:255,246,214}
+[data-theme="light"] .cinema-frame{--aura-1:214,168,64;--aura-2:176,128,30;--aura-3:255,236,186}
+.cinema-frame .hero-speak{
+  position:absolute;inset:0;
   z-index:1;
-  transition:opacity 320ms ease;
+  opacity:0;
+  transition:opacity 300ms ease;
   pointer-events:none;
+  transform-origin:50% 28%;
 }
-.cinema-frame.is-speaking .hero-talking{opacity:1}
+.cinema-frame.is-voiced .hero-speak{
+  opacity:1;
+  animation:speak-breathe 4.6s ease-in-out infinite alternate;
+}
+.cinema-frame .hero-speak .hero-mouth{
+  background:transparent;
+  opacity:0;
+  will-change:opacity;
+}
+@keyframes speak-breathe{
+  from{transform:translateY(0) scale(1)}
+  to{transform:translateY(-0.35%) scale(1.006)}
+}
+.hero-aura{
+  position:absolute;inset:0;
+  z-index:4;
+  pointer-events:none;
+  border-radius:inherit;
+  opacity:0;
+  box-shadow:
+    inset 0 0 0 calc(1px + 2px * var(--vox)) rgba(var(--aura-3), calc(.35 + .55 * var(--vox))),
+    inset 0 0 calc(18px + 70px * var(--vox)) calc(2px + 10px * var(--vox)) rgba(var(--aura-1), calc(.25 + .45 * var(--vox))),
+    inset 0 0 calc(6px + 18px * var(--vox)) rgba(var(--aura-2), .55);
+}
+.cinema-frame.is-voiced .hero-aura{opacity:calc(.12 + .88 * var(--vox))}
 .cinema-frame .hero-still{display:none}
 @keyframes kenburns{
   from{transform:scale(1)}
@@ -410,12 +440,14 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   width:max-content;
   max-width:calc(100% - 28px);
 }
-.cinema-frame.is-speaking,
 .cinema-frame.is-live{
   box-shadow:0 0 0 1px rgba(228,197,107,.7),0 0 48px rgba(228,197,107,.35),0 0 90px rgba(168,85,255,.28);
 }
-.cinema-frame.is-speaking::after{
-  animation:frame-speak 1.15s ease-in-out infinite;
+.cinema-frame.is-voiced{
+  box-shadow:
+    0 0 0 1px rgba(var(--aura-1), calc(.45 + .5 * var(--vox))),
+    0 0 calc(26px + 70px * var(--vox)) calc(var(--vox) * 10px) rgba(var(--aura-2), calc(.22 + .5 * var(--vox))),
+    0 0 calc(60px + 80px * var(--vox)) rgba(var(--aura-1), calc(.1 + .3 * var(--vox)));
 }
 @keyframes frame-speak{
   0%,100%{box-shadow:inset 0 0 80px rgba(10,6,18,.28),0 0 24px rgba(228,197,107,.45)}
@@ -559,6 +591,14 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
     box-shadow:inset 0 0 70px 14px rgba(10,6,18,.28);
     border-radius:inherit;
   }
+  .cinema-frame.is-voiced{box-shadow:none}
+  .cinema-frame .hero-aura{inset:auto;left:50%;top:3%;height:58%;aspect-ratio:774/1080;max-width:min(560px, 64vw);translate:-50% 0;border-radius:40% 40% 22px 22px / 13% 13% 22px 22px}
+  .cinema-frame.is-voiced .cinema-arch{
+    box-shadow:0 0 0 3px #e4c56b,
+      0 0 0 calc(4px + 3px * var(--vox)) rgba(var(--aura-3), calc(.2 + .5 * var(--vox))),
+      0 0 calc(40px + 80px * var(--vox)) calc(var(--vox) * 14px) rgba(var(--aura-2), calc(.3 + .5 * var(--vox))),
+      0 24px 70px rgba(10,6,18,.55);
+  }
 }
 
 @media (min-width:1024px){
@@ -601,6 +641,12 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
     margin:12px 22px 22px 8px;
     border-radius:42% 42% 28px 28px / 14% 14% 28px 28px;
     box-shadow:var(--shadow),0 0 80px rgba(168,85,255,.2),0 0 60px rgba(228,197,107,.18);
+  }
+  .cinema-frame.is-voiced{
+    box-shadow:var(--shadow),
+      0 0 0 calc(1px + 3px * var(--vox)) rgba(var(--aura-3), calc(.25 + .6 * var(--vox))),
+      0 0 calc(40px + 90px * var(--vox)) calc(var(--vox) * 16px) rgba(var(--aura-2), calc(.25 + .55 * var(--vox))),
+      0 0 calc(90px + 110px * var(--vox)) rgba(var(--aura-1), calc(.12 + .35 * var(--vox)));
   }
   .cinema-arch{
     inset:7px;
@@ -952,6 +998,7 @@ footer{
   .stat:hover,.agent:hover{transform:none}
   .cinema-frame video{display:none!important}
   .cinema-frame .hero-still{display:block!important}
+  .cinema-frame .hero-speak{transition:none!important}
   .cinema-frame .hero-media{animation:none!important;transform:none!important}
 }
 
@@ -1093,8 +1140,9 @@ footer{
 .talk-note{font-size:11px;color:var(--muted);line-height:1.45;margin:0}
 .talk-mic-on{border-color:var(--gold)!important;color:var(--gold)}
 @media (prefers-reduced-motion:reduce){
-  .fab-avatar-wrap.is-speaking,.talk-avatar-wrap.is-speaking,.cinema-frame.is-speaking{animation:none;box-shadow:0 0 0 4px rgba(228,197,107,.35)}
-  .cinema-frame.is-speaking::after{animation:none}
+  .fab-avatar-wrap.is-speaking,.talk-avatar-wrap.is-speaking{animation:none;box-shadow:0 0 0 4px rgba(228,197,107,.35)}
+  .cinema-frame.is-voiced .hero-speak{animation:none!important;transform:none!important}
+  .cinema-frame{--vox:.4!important}
   .talk-typing span{animation:none;opacity:.8}
 }
 
@@ -1170,11 +1218,14 @@ footer{
           <video id="ronnie-hero-idle" class="hero-media hero-idle" autoplay muted loop playsinline poster="assets/ronnie-idle-poster.jpg" width="774" height="1080" aria-label="AI-generated hostess Ronnie waiting at the doorway of a luxury foyer">
             <source src="assets/ronnie-idle.mp4" type="video/mp4">
           </video>
-          <video id="ronnie-hero-talking" class="hero-media hero-talking" muted loop playsinline preload="auto" poster="assets/ronnie-talking-poster.jpg" width="774" height="1080" aria-hidden="true">
-            <source src="assets/ronnie-talking.mp4" type="video/mp4">
-          </video>
-          <img id="ronnie-hero-still" class="hero-media hero-still" src="assets/ronnie-idle-poster.jpg" data-idle-src="assets/ronnie-idle-poster.jpg" data-talking-src="assets/ronnie-talking-poster.jpg" alt="AI-generated hostess Ronnie at the doorway of a luxury foyer" width="774" height="1080">
+          <img id="ronnie-hero-still" class="hero-media hero-still" src="assets/ronnie-idle-poster.jpg" alt="AI-generated hostess Ronnie at the doorway of a luxury foyer" width="774" height="1080">
+          <div class="hero-speak" id="ronnie-hero-speak" aria-hidden="true">
+            <img class="hero-media hero-speak-base" src="assets/ronnie-speak.webp" alt="" width="774" height="1080" decoding="async">
+            <img class="hero-media hero-mouth" id="ronnie-mouth-mid" src="assets/ronnie-mouth-mid.webp" alt="" width="774" height="1080" decoding="async">
+            <img class="hero-media hero-mouth" id="ronnie-mouth-open" src="assets/ronnie-mouth-open.webp" alt="" width="774" height="1080" decoding="async">
+          </div>
         </div>
+        <div class="hero-aura" id="ronnie-aura" aria-hidden="true"></div>
         <span class="hero-frame-corner tl" aria-hidden="true"></span>
         <span class="hero-frame-corner tr" aria-hidden="true"></span>
         <span class="hero-frame-corner bl" aria-hidden="true"></span>
@@ -1997,50 +2048,182 @@ function fillVoicePicker(){
   selectedVoiceURI = select.value;
 }
 
-let heroTalkTimer = null;
+let heroPoseTimer = null;
+let heroSpeakingNow = false;
 
 function prefersReducedMotion(){
   return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 }
 
-function setHeroSpeaking(on){
-  const idle = $("ronnie-hero-idle");
-  const talking = $("ronnie-hero-talking");
-  const still = $("ronnie-hero-still");
-  if(heroTalkTimer){
-    clearTimeout(heroTalkTimer);
-    heroTalkTimer = null;
-  }
-  if(prefersReducedMotion()){
-    if(still){
-      const idleSrc = still.getAttribute("data-idle-src") || "assets/ronnie-idle-poster.jpg";
-      const talkSrc = still.getAttribute("data-talking-src") || "assets/ronnie-talking-poster.jpg";
-      still.src = on ? talkSrc : idleSrc;
-      still.style.display = "block";
-    }
-    [idle, talking].forEach((video) => {
-      if(!video) return;
-      try{ video.pause(); }catch(e){}
-      video.setAttribute("hidden", "");
-    });
-    return;
-  }
-  if(on && talking){
+/* ---- Voice-reactive mouth + gold aura. Free: reads loudness on the device, no paid service. ----
+   Live chat: conversation.getOutputVolume() (ElevenLabs client, voice-band level 0..1).
+   Quick lines: a WebAudio AnalyserNode on the MP3 playback (same voice-band metric). */
+const RonnieVoice = (() => {
+  let ctx = null, analyser = null, bins = null, lo = 0, hi = 0;
+  const attached = new WeakSet();
+  let clipEl = null, deviceSpeaking = false, liveSource = null;
+  let raf = 0, last = 0, mouth = 0, aura = 0, quietFor = 0, frozen = false;
+  const stats = { maxRaw: 0, maxMouth: 0, maxAura: 0, frames: 0, source: "" };
+
+  function ensureContext(){
     try{
-      const duration = talking.duration;
-      if(duration && isFinite(duration) && duration > 1){
-        talking.currentTime = Math.random() * Math.max(0.2, duration - 0.8);
-      }else{
-        talking.currentTime = 0;
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if(!AC) return null;
+      if(!ctx){
+        ctx = new AC();
+        analyser = ctx.createAnalyser();
+        analyser.fftSize = 512;
+        analyser.smoothingTimeConstant = 0.4;
+        analyser.connect(ctx.destination);
+        bins = new Uint8Array(analyser.frequencyBinCount);
+        const hz = ctx.sampleRate / analyser.fftSize;
+        lo = Math.max(1, Math.floor(100 / hz));
+        hi = Math.min(bins.length - 1, Math.ceil(4000 / hz));
       }
-    }catch(e){}
-    const playPromise = talking.play();
-    if(playPromise && playPromise.catch) playPromise.catch(() => {});
-  }else if(talking){
-    heroTalkTimer = setTimeout(() => {
-      try{ talking.pause(); }catch(e){}
-    }, 360);
+      if(ctx.state !== "running" && ctx.resume) ctx.resume().catch(() => {});
+      return ctx;
+    }catch(e){ return null; }
   }
+
+  // Call inside the tap, before el.play(), so iOS Safari unlocks audio.
+  function prepareClip(el){
+    const c = ensureContext();
+    clipEl = el;
+    if(!c || !el || attached.has(el)) return;
+    // Only route through WebAudio once the context is running, otherwise iOS would play silence.
+    if(c.state !== "running") return;
+    try{
+      const src = c.createMediaElementSource(el);
+      src.connect(analyser);
+      attached.add(el);
+    }catch(e){}
+  }
+
+  function clipLevel(){
+    if(!clipEl || clipEl.paused || clipEl.ended) return 0;
+    if(!attached.has(clipEl) || !analyser) return synthLevel();
+    analyser.getByteFrequencyData(bins);
+    let sum = 0;
+    for(let i = lo; i <= hi; i++) sum += bins[i];
+    return sum / ((hi - lo + 1) * 255);
+  }
+
+  function synthLevel(){
+    const t = performance.now() / 1000;
+    return 0.16 + 0.12 * Math.abs(Math.sin(t * 7.3)) * (0.6 + 0.4 * Math.sin(t * 2.1));
+  }
+
+  function rawLevel(){
+    if(liveSource){
+      try{
+        const v = liveSource.getOutputVolume();
+        if(typeof v === "number" && isFinite(v)) { stats.source = "live"; return v; }
+      }catch(e){}
+      return 0;
+    }
+    if(clipEl && !clipEl.paused){ stats.source = attached.has(clipEl) ? "clip-analyser" : "clip-synth"; return clipLevel(); }
+    if(deviceSpeaking){ stats.source = "device-synth"; return synthLevel(); }
+    return 0;
+  }
+
+  // Map voice-band level to 0..1 with a noise gate so the mouth shuts fully in silence.
+  // Calibrated on real audio. Quick-line MP3s: speech reads about 0.35 to 0.8, pauses fall to 0.
+  // Live agent audio (ElevenLabs output analyser): speech about 0.25 to 0.45, gaps under 0.1.
+  const CAL = { clip: [0.35, 0.45], live: [0.15, 0.3], synth: [0.1, 0.3] };
+  function shape(v){
+    const cal = CAL[stats.source === "live" ? "live" : (stats.source === "clip-analyser" ? "clip" : "synth")];
+    const gated = (v - cal[0]) / cal[1];
+    return gated <= 0 ? 0 : gated >= 1 ? 1 : Math.pow(gated, 1.2);
+  }
+
+  function apply(){
+    const frame = $("cinema-frame");
+    const mid = $("ronnie-mouth-mid");
+    const open = $("ronnie-mouth-open");
+    const a = Math.round(aura * 1000) / 1000;
+    if(frame) frame.style.setProperty("--vox", String(a));
+    if(mid) mid.style.opacity = String(Math.min(1, Math.max(0, mouth * 2.4)));
+    if(open) open.style.opacity = String(Math.min(1, Math.max(0, (mouth - 0.45) * 2.2)));
+  }
+
+  function tick(now){
+    if(frozen){ last = now; raf = requestAnimationFrame(tick); return; }
+    const dt = last ? Math.min(100, now - last) : 16.7;
+    last = now;
+    const raw = rawLevel();
+    const target = shape(raw);
+    // Fast open, slower close; frame-rate independent smoothing to avoid jitter.
+    const kM = target > mouth ? 0.55 : 0.32;
+    const kA = target > aura ? 0.22 : 0.07;
+    mouth += (target - mouth) * (1 - Math.pow(1 - kM, dt / 16.7));
+    aura += (target - aura) * (1 - Math.pow(1 - kA, dt / 16.7));
+    if(target === 0 && mouth < 0.02) mouth = 0;
+    if(target === 0 && aura < 0.01) aura = 0;
+    stats.frames++;
+    stats.last = raw;
+    stats.maxRaw = Math.max(stats.maxRaw, raw);
+    stats.maxMouth = Math.max(stats.maxMouth, mouth);
+    stats.maxAura = Math.max(stats.maxAura, aura);
+    apply();
+    const busy = liveSource || deviceSpeaking || (clipEl && !clipEl.paused);
+    quietFor = (!busy && mouth === 0 && aura === 0) ? quietFor + dt : 0;
+    if(quietFor > 800){ raf = 0; last = 0; return; }
+    raf = requestAnimationFrame(tick);
+  }
+
+  function wake(){
+    quietFor = 0;
+    if(!raf) raf = requestAnimationFrame(tick);
+  }
+
+  return {
+    prepareClip(el){ prepareClip(el); wake(); },
+    clipStarted(el){ clipEl = el; wake(); },
+    setDevice(on){ deviceSpeaking = !!on; wake(); },
+    setLive(conv){ liveSource = conv || null; wake(); },
+    unlock(){ ensureContext(); },
+    freeze(on){ frozen = !!on; wake(); },
+    wake,
+    stats,
+    level(){ return { mouth, aura }; }
+  };
+})();
+window.__ronnieVoice = RonnieVoice;
+
+function setHeroPose(on){
+  const frame = $("cinema-frame");
+  const idle = $("ronnie-hero-idle");
+  if(!frame) return;
+  if(heroPoseTimer){ clearTimeout(heroPoseTimer); heroPoseTimer = null; }
+  if(on){
+    if(frame.classList.contains("is-voiced")) return;
+    frame.classList.add("is-voiced");
+    // After the crossfade, park the idle clip on its first frame, which is the speaking still.
+    heroPoseTimer = setTimeout(() => {
+      if(!idle || prefersReducedMotion()) return;
+      try{ idle.pause(); idle.currentTime = 0; }catch(e){}
+    }, 340);
+  }else{
+    if(!frame.classList.contains("is-voiced")) return;
+    if(idle && !prefersReducedMotion()){
+      try{ idle.currentTime = 0; }catch(e){}
+      const pp = idle.play();
+      if(pp && pp.catch) pp.catch(() => {});
+    }
+    frame.classList.remove("is-voiced");
+  }
+}
+
+function setHeroSpeaking(on){
+  heroSpeakingNow = !!on;
+  RonnieVoice.wake();
+  // Live chat holds the speaking pose for the whole call; quick lines hold it briefly after the line ends.
+  if(on || liveConversation || liveStarting){ setHeroPose(true); return; }
+  if(heroPoseTimer) clearTimeout(heroPoseTimer);
+  heroPoseTimer = setTimeout(() => {
+    heroPoseTimer = null;
+    if(!heroSpeakingNow && !liveConversation && !liveStarting) setHeroPose(false);
+  }, 700);
 }
 
 function setSpeaking(on){
@@ -2078,6 +2261,7 @@ function playRonnieClip(clipId){
     return;
   }
   try{ el.currentTime = 0; }catch(e){}
+  RonnieVoice.prepareClip(el);
   const playPromise = el.play();
   if(playPromise && playPromise.catch){
     playPromise.catch(() => setSpeaking(false));
@@ -2086,7 +2270,7 @@ function playRonnieClip(clipId){
 
 function setupClipEvents(){
   clipElements().forEach((el) => {
-    el.addEventListener("play", () => setSpeaking(true));
+    el.addEventListener("play", () => { RonnieVoice.clipStarted(el); setSpeaking(true); });
     el.addEventListener("playing", () => setSpeaking(true));
     el.addEventListener("ended", () => setSpeaking(false));
     el.addEventListener("pause", () => {
@@ -2108,9 +2292,9 @@ function speakWithDevice(text){
   if(voice) utterance.voice = voice;
   utterance.rate = 0.98;
   utterance.pitch = 1.04;
-  utterance.onstart = () => setSpeaking(true);
-  utterance.onend = () => setSpeaking(false);
-  utterance.onerror = () => setSpeaking(false);
+  utterance.onstart = () => { RonnieVoice.setDevice(true); setSpeaking(true); };
+  utterance.onend = () => { RonnieVoice.setDevice(false); setSpeaking(false); };
+  utterance.onerror = () => { RonnieVoice.setDevice(false); setSpeaking(false); };
   speechSynthesis.speak(utterance);
 }
 
@@ -2308,10 +2492,9 @@ function setupMic(){
 
 function setupHeroMotion(){
   const idle = $("ronnie-hero-idle");
-  const talking = $("ronnie-hero-talking");
   const still = $("ronnie-hero-still");
   if(prefersReducedMotion()){
-    [idle, talking].forEach((video) => {
+    [idle].forEach((video) => {
       if(!video) return;
       try{ video.pause(); }catch(e){}
       video.removeAttribute("autoplay");
@@ -2341,6 +2524,7 @@ function setLiveFrame(on){
   const frame = $("cinema-frame");
   if(frame) frame.classList.toggle("is-live", !!on);
   document.body.classList.toggle("ronnie-live-on", !!on);
+  if(!on) RonnieVoice.setLive(null);
 }
 
 function setLiveStatus(status){
@@ -2448,8 +2632,10 @@ async function startLiveRonnie(){
     return;
   }
   liveStarting = true;
+  RonnieVoice.unlock();
   setLiveFrame(true);
   setLiveStatus("connecting");
+  setHeroPose(true);
   try{
     await requestLiveMic();
   }catch(err){
@@ -2494,6 +2680,8 @@ async function startLiveRonnie(){
     });
     liveStarting = false;
     stopLiveMicPreview();
+    RonnieVoice.setLive(liveConversation);
+    setHeroSpeaking(false);
     if(liveStatus === "connecting") setLiveStatus("listening");
   }catch(err){
     liveStarting = false;
