@@ -348,31 +348,9 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   animation:kenburns 22s ease-in-out infinite alternate;
   transform-origin:26% 18%;
 }
-/* Speaking pose: one still frame from the idle clip plus two mouth layers (mid, open)
-   that fade in with Ronnie's real voice level. No baked-in lip motion. */
+/* Voice-reactive gold aura: --vox (0..1) follows Ronnie's real voice level. The idle clip keeps playing. */
 .cinema-frame{--vox:0;--aura-1:243,224,166;--aura-2:228,197,107;--aura-3:255,246,214}
 [data-theme="light"] .cinema-frame{--aura-1:214,168,64;--aura-2:176,128,30;--aura-3:255,236,186}
-.cinema-frame .hero-speak{
-  position:absolute;inset:0;
-  z-index:1;
-  opacity:0;
-  transition:opacity 300ms ease;
-  pointer-events:none;
-  transform-origin:50% 28%;
-}
-.cinema-frame.is-voiced .hero-speak{
-  opacity:1;
-  animation:speak-breathe 4.6s ease-in-out infinite alternate;
-}
-.cinema-frame .hero-speak .hero-mouth{
-  background:transparent;
-  opacity:0;
-  will-change:opacity;
-}
-@keyframes speak-breathe{
-  from{transform:translateY(0) scale(1)}
-  to{transform:translateY(-0.35%) scale(1.006)}
-}
 .hero-aura{
   position:absolute;inset:0;
   z-index:4;
@@ -998,7 +976,6 @@ footer{
   .stat:hover,.agent:hover{transform:none}
   .cinema-frame video{display:none!important}
   .cinema-frame .hero-still{display:block!important}
-  .cinema-frame .hero-speak{transition:none!important}
   .cinema-frame .hero-media{animation:none!important;transform:none!important}
 }
 
@@ -1141,7 +1118,6 @@ footer{
 .talk-mic-on{border-color:var(--gold)!important;color:var(--gold)}
 @media (prefers-reduced-motion:reduce){
   .fab-avatar-wrap.is-speaking,.talk-avatar-wrap.is-speaking{animation:none;box-shadow:0 0 0 4px rgba(228,197,107,.35)}
-  .cinema-frame.is-voiced .hero-speak{animation:none!important;transform:none!important}
   .cinema-frame{--vox:.4!important}
   .talk-typing span{animation:none;opacity:.8}
 }
@@ -1215,15 +1191,10 @@ footer{
         <div class="cinema-glow purple" aria-hidden="true"></div>
         <div class="cinema-glow gold" aria-hidden="true"></div>
         <div class="cinema-arch">
-          <video id="ronnie-hero-idle" class="hero-media hero-idle" autoplay muted loop playsinline poster="assets/ronnie-idle-poster.jpg" width="774" height="1080" aria-label="AI-generated hostess Ronnie waiting at the doorway of a luxury foyer">
-            <source src="assets/ronnie-idle.mp4" type="video/mp4">
+          <video id="ronnie-hero-idle" class="hero-media hero-idle" autoplay muted loop playsinline poster="assets/ronnie-idle-poster.jpg?v=aura2" width="774" height="1080" aria-label="AI-generated hostess Ronnie waiting at the doorway of a luxury foyer">
+            <source src="assets/ronnie-idle.mp4?v=aura2" type="video/mp4">
           </video>
           <img id="ronnie-hero-still" class="hero-media hero-still" src="assets/ronnie-idle-poster.jpg" alt="AI-generated hostess Ronnie at the doorway of a luxury foyer" width="774" height="1080">
-          <div class="hero-speak" id="ronnie-hero-speak" aria-hidden="true">
-            <img class="hero-media hero-speak-base" src="assets/ronnie-speak.webp" alt="" width="774" height="1080" decoding="async">
-            <img class="hero-media hero-mouth" id="ronnie-mouth-mid" src="assets/ronnie-mouth-mid.webp" alt="" width="774" height="1080" decoding="async">
-            <img class="hero-media hero-mouth" id="ronnie-mouth-open" src="assets/ronnie-mouth-open.webp" alt="" width="774" height="1080" decoding="async">
-          </div>
         </div>
         <div class="hero-aura" id="ronnie-aura" aria-hidden="true"></div>
         <span class="hero-frame-corner tl" aria-hidden="true"></span>
@@ -2055,15 +2026,15 @@ function prefersReducedMotion(){
   return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 }
 
-/* ---- Voice-reactive mouth + gold aura. Free: reads loudness on the device, no paid service. ----
+/* ---- Voice-reactive gold aura. Free: reads loudness on the device, no paid service. ----
    Live chat: conversation.getOutputVolume() (ElevenLabs client, voice-band level 0..1).
    Quick lines: a WebAudio AnalyserNode on the MP3 playback (same voice-band metric). */
 const RonnieVoice = (() => {
   let ctx = null, analyser = null, bins = null, lo = 0, hi = 0;
   const attached = new WeakSet();
   let clipEl = null, deviceSpeaking = false, liveSource = null;
-  let raf = 0, last = 0, mouth = 0, aura = 0, quietFor = 0, frozen = false;
-  const stats = { maxRaw: 0, maxMouth: 0, maxAura: 0, frames: 0, source: "" };
+  let raf = 0, last = 0, aura = 0, quietFor = 0, frozen = false;
+  const stats = { maxRaw: 0, maxAura: 0, frames: 0, source: "" };
 
   function ensureContext(){
     try{
@@ -2126,7 +2097,7 @@ const RonnieVoice = (() => {
     return 0;
   }
 
-  // Map voice-band level to 0..1 with a noise gate so the mouth shuts fully in silence.
+  // Map voice-band level to 0..1 with a noise gate so the aura goes quiet in silence.
   // Calibrated on real audio. Quick-line MP3s: speech reads about 0.35 to 0.8, pauses fall to 0.
   // Live agent audio (ElevenLabs output analyser): speech about 0.25 to 0.45, gaps under 0.1.
   const CAL = { clip: [0.35, 0.45], live: [0.15, 0.3], synth: [0.1, 0.3] };
@@ -2138,12 +2109,8 @@ const RonnieVoice = (() => {
 
   function apply(){
     const frame = $("cinema-frame");
-    const mid = $("ronnie-mouth-mid");
-    const open = $("ronnie-mouth-open");
     const a = Math.round(aura * 1000) / 1000;
     if(frame) frame.style.setProperty("--vox", String(a));
-    if(mid) mid.style.opacity = String(Math.min(1, Math.max(0, mouth * 2.4)));
-    if(open) open.style.opacity = String(Math.min(1, Math.max(0, (mouth - 0.45) * 2.2)));
   }
 
   function tick(now){
@@ -2152,21 +2119,17 @@ const RonnieVoice = (() => {
     last = now;
     const raw = rawLevel();
     const target = shape(raw);
-    // Fast open, slower close; frame-rate independent smoothing to avoid jitter.
-    const kM = target > mouth ? 0.55 : 0.32;
+    // Quick rise, slow fall; frame-rate independent smoothing to avoid jitter.
     const kA = target > aura ? 0.22 : 0.07;
-    mouth += (target - mouth) * (1 - Math.pow(1 - kM, dt / 16.7));
     aura += (target - aura) * (1 - Math.pow(1 - kA, dt / 16.7));
-    if(target === 0 && mouth < 0.02) mouth = 0;
     if(target === 0 && aura < 0.01) aura = 0;
     stats.frames++;
     stats.last = raw;
     stats.maxRaw = Math.max(stats.maxRaw, raw);
-    stats.maxMouth = Math.max(stats.maxMouth, mouth);
     stats.maxAura = Math.max(stats.maxAura, aura);
     apply();
     const busy = liveSource || deviceSpeaking || (clipEl && !clipEl.paused);
-    quietFor = (!busy && mouth === 0 && aura === 0) ? quietFor + dt : 0;
+    quietFor = (!busy && aura === 0) ? quietFor + dt : 0;
     if(quietFor > 800){ raf = 0; last = 0; return; }
     raf = requestAnimationFrame(tick);
   }
@@ -2185,39 +2148,22 @@ const RonnieVoice = (() => {
     freeze(on){ frozen = !!on; wake(); },
     wake,
     stats,
-    level(){ return { mouth, aura }; }
+    level(){ return { aura }; }
   };
 })();
 window.__ronnieVoice = RonnieVoice;
 
 function setHeroPose(on){
+  // The idle clip (closed-mouth, no lip motion) keeps playing; this only turns the gold voice aura on or off.
   const frame = $("cinema-frame");
-  const idle = $("ronnie-hero-idle");
-  if(!frame) return;
   if(heroPoseTimer){ clearTimeout(heroPoseTimer); heroPoseTimer = null; }
-  if(on){
-    if(frame.classList.contains("is-voiced")) return;
-    frame.classList.add("is-voiced");
-    // After the crossfade, park the idle clip on its first frame, which is the speaking still.
-    heroPoseTimer = setTimeout(() => {
-      if(!idle || prefersReducedMotion()) return;
-      try{ idle.pause(); idle.currentTime = 0; }catch(e){}
-    }, 340);
-  }else{
-    if(!frame.classList.contains("is-voiced")) return;
-    if(idle && !prefersReducedMotion()){
-      try{ idle.currentTime = 0; }catch(e){}
-      const pp = idle.play();
-      if(pp && pp.catch) pp.catch(() => {});
-    }
-    frame.classList.remove("is-voiced");
-  }
+  if(frame) frame.classList.toggle("is-voiced", !!on);
 }
 
 function setHeroSpeaking(on){
   heroSpeakingNow = !!on;
   RonnieVoice.wake();
-  // Live chat holds the speaking pose for the whole call; quick lines hold it briefly after the line ends.
+  // Live chat keeps the aura armed for the whole call; quick lines keep it briefly after the line ends.
   if(on || liveConversation || liveStarting){ setHeroPose(true); return; }
   if(heroPoseTimer) clearTimeout(heroPoseTimer);
   heroPoseTimer = setTimeout(() => {
