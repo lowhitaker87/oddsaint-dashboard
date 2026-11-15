@@ -1196,12 +1196,86 @@ footer{
 }
 .freak-tile{background:linear-gradient(160deg,rgba(104,28,53,.55),rgba(57,9,23,.7));border-color:rgba(255,67,139,.35)}
 [data-theme="light"] .freak-tile{background:linear-gradient(160deg,rgba(104,28,53,.1),rgba(255,67,139,.06))}
-.freak-post{
-  border-radius:12px;padding:16px;background:#390917;color:#F7E9DE;border:1px solid rgba(255,67,139,.35);
+@font-face{font-family:"FQ Brush";src:url("assets/fonts/kaushan-script-sub.woff") format("woff");font-display:swap}
+/* THE FREAKQUENCY example card: 4:5 IG post rebuilt in pure CSS (satin = gradients). */
+.fq-card{
+  --fq-gold:linear-gradient(180deg,#FFF3CF 0%,#F6E3B4 30%,#D9B26F 58%,#9C6B30 82%,#E9C98A 100%);
+  --fq-pink:#FF3D8B;
+  position:relative;overflow:hidden;isolation:isolate;container-type:inline-size;
+  width:100%;max-width:380px;align-self:center;aspect-ratio:4/5;border-radius:12px;
+  color:#F8EBDD;font-family:var(--font-display);text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+  padding:6% 7% 4%;
+  background:
+    radial-gradient(14% 9% at 86% 14%,rgba(255,170,90,.35),transparent 70%),
+    radial-gradient(10% 7% at 12% 22%,rgba(255,120,90,.28),transparent 70%),
+    radial-gradient(60% 30% at 50% 0%,rgba(140,10,40,.55),transparent 75%),
+    linear-gradient(162deg,transparent 54%,rgba(179,38,63,.55) 60%,rgba(122,15,36,.2) 66%,transparent 72%),
+    linear-gradient(200deg,transparent 64%,rgba(179,38,63,.5) 70%,rgba(58,6,16,.3) 77%,transparent 83%),
+    linear-gradient(150deg,transparent 78%,rgba(200,50,75,.45) 84%,transparent 90%),
+    radial-gradient(120% 70% at 50% 100%,#7A0F24 0%,#3A0610 55%,#1A0207 100%);
+  box-shadow:0 14px 30px rgba(0,0,0,.4);
 }
-.freak-post .fp-kicker{font-family:var(--font-royal);font-size:11px;letter-spacing:.2em;color:#FF438B;text-transform:uppercase}
-.freak-post p{font-family:var(--font-display);font-size:18px;line-height:1.3;margin-top:6px}
-.freak-post .fp-sign{font-size:11px;color:#e9b9c9;margin-top:10px;letter-spacing:.06em}
+.fq-card::before{ /* lace corners */
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.35;
+  background:
+    radial-gradient(circle at 0 100%,transparent 0 16%,transparent 16%),
+    repeating-radial-gradient(circle at 0 100%,rgba(0,0,0,.9) 0 2px,transparent 2px 7px),
+    repeating-radial-gradient(circle at 100% 100%,rgba(0,0,0,.9) 0 2px,transparent 2px 7px);
+  -webkit-mask:radial-gradient(34% 26% at 0 100%,#000 60%,transparent 100%),radial-gradient(30% 22% at 100% 100%,#000 60%,transparent 100%);
+          mask:radial-gradient(34% 26% at 0 100%,#000 60%,transparent 100%),radial-gradient(30% 22% at 100% 100%,#000 60%,transparent 100%);
+}
+.fq-deco{position:absolute;z-index:0;pointer-events:none}
+.fq-cherries{width:20cqw;left:3cqw;top:24cqw;transform:rotate(-14deg);filter:drop-shadow(0 4px 6px rgba(0,0,0,.6))}
+.fq-pearls{right:-3cqw;bottom:23cqw;width:24cqw;height:3.2cqw;transform:rotate(-32deg);border-radius:9px;
+  background:radial-gradient(circle at 40% 35%,#fffaf0 0 18%,#e8d6c0 40%,#9a8571 70%,transparent 72%) 0 0/3.2cqw 3.2cqw repeat-x}
+.fq-coupe{right:2cqw;top:15cqw;width:13cqw;opacity:.9}
+.fq-lips{left:4cqw;bottom:7cqw;width:14cqw;opacity:.55;transform:rotate(-12deg)}
+.fq-title{position:relative;z-index:1;line-height:.9;margin-top:1cqw}
+.fq-title .fq-gold{
+  display:block;font-family:var(--font-display);font-weight:700;font-size:13cqw;letter-spacing:.01em;text-transform:uppercase;
+  background:linear-gradient(180deg,#FFE6DC 0%,#F4B7A6 35%,#C9707A 70%,#F9C9B8 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 2px 0 rgba(60,0,10,.8)) drop-shadow(0 0 10px rgba(255,120,140,.35));
+}
+.fq-title .fq-neon{
+  display:block;font-family:"FQ Brush","Brush Script MT","Segoe Script",cursive;font-size:13cqw;font-weight:400;
+  color:#FFB3D1;margin-top:-1.5cqw;transform:rotate(-5deg);
+  text-shadow:0 0 2px #fff,0 0 6px var(--fq-pink),0 0 14px var(--fq-pink),0 0 28px #FF2E7E;
+}
+.fq-star{position:absolute;width:3.4cqw;height:3.4cqw;background:#FFE9F1;z-index:2;
+  clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);
+  filter:drop-shadow(0 0 4px #FF6FA5)}
+.fq-panel{
+  position:relative;z-index:1;width:100%;border-radius:5cqw;padding:5.5cqw 6cqw 5cqw;
+  background:linear-gradient(180deg,rgba(52,4,14,.88),rgba(28,2,8,.9));
+  border:1.5px solid #F2A3A0;
+  box-shadow:0 0 0 1px rgba(255,92,147,.25),0 0 18px rgba(255,92,147,.45),inset 0 0 22px rgba(255,92,147,.12);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+}
+.fq-panel .fq-star.s1{top:-1.7cqw;left:calc(50% - 1.7cqw)}
+.fq-panel .fq-star.s2{bottom:-1.7cqw;left:calc(50% - 1.7cqw)}
+.fq-panel .fq-star.s3{top:calc(40% - 1.7cqw);left:-1.7cqw}
+.fq-panel .fq-star.s4{top:calc(40% - 1.7cqw);right:-1.7cqw}
+.fq-beat{margin:0 0 2.4cqw;font-size:5.6cqw;line-height:1.16;font-weight:600}
+.fq-beat em{color:#FF4F94;font-style:italic}
+.fq-divider{display:flex;align-items:center;gap:2cqw;margin:3cqw 0 2.6cqw;color:#FF4F94;font-size:3.6cqw}
+.fq-divider::before,.fq-divider::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,#FF4F94,transparent)}
+.fq-pill{display:inline-block;font-family:var(--font-royal);font-size:3cqw;letter-spacing:.16em;text-transform:uppercase;
+  padding:1.2cqw 4cqw;border:1px solid #FF4F94;border-radius:999px;color:#FBE3D6;box-shadow:0 0 8px rgba(255,79,148,.4)}
+.fq-response{margin:2.6cqw 0 0;font-size:5.4cqw;line-height:1.18;font-weight:600}
+.fq-response b{color:#E8C27A;font-weight:700}
+.fq-logo{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;line-height:1;color:#F6DCCB}
+.fq-logo .fq-the{font-family:"FQ Brush","Brush Script MT",cursive;font-size:3.6cqw;color:#F4B7A6;margin-bottom:-.4cqw}
+.fq-logo .fq-word{font-family:var(--font-display);font-size:3.6cqw;letter-spacing:.08em}
+.fq-logo .fq-rule{display:flex;align-items:center;gap:1.6cqw;margin-top:.8cqw}
+.fq-logo .fq-rule::before,.fq-logo .fq-rule::after{content:"";width:7cqw;height:1px;background:#F4B7A6;opacity:.7}
+.fq-logo svg{width:4cqw;height:4cqw}
+.fq-caption{font-size:12px;color:var(--muted);text-align:center;margin:0}
+@media (prefers-reduced-motion:no-preference){
+  .fq-title .fq-neon{animation:fqFlicker 6s infinite}
+  @keyframes fqFlicker{0%,92%,100%{opacity:1}93%{opacity:.75}94%{opacity:1}96%{opacity:.85}}
+}
 .milan-tile{background:linear-gradient(160deg,rgba(120,70,180,.22),rgba(40,20,60,.5));border-color:rgba(160,110,230,.4)}
 [data-theme="light"] .milan-tile{background:linear-gradient(160deg,rgba(150,100,220,.1),rgba(255,255,255,.5))}
 .milan-card{
@@ -1386,13 +1460,26 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
             <section class="page-tile freak-tile" aria-label="THE FREAKQUENCY example">
               <header>
                 <div class="page-id"><span class="page-avatar"><picture><source type="image/webp" srcset="assets/roxie-avatar.webp"><img src="assets/roxie-avatar.jpg" alt="AI-generated Roxie" width="128" height="128" loading="lazy" decoding="async"></picture></span><div><h4>THE FREAKQUENCY 🍒</h4><div class="page-meta">Hosted by Roxie Monroe (AI) · Instagram</div></div></div>
-                <span class="example-chip">Example draft</span>
+                <span class="example-chip">Example post</span>
               </header>
-              <div class="freak-post">
-                <div class="fp-kicker">Sip or Spill</div>
-                <p>What's the most unhinged thing you've done just to look "unbothered"? Be honest. We're all friends here.</p>
-                <div class="fp-sign">THE FREAKQUENCY · Roxie is an AI character</div>
+              <div class="fq-card" role="img" aria-label="Example Confession Line card. Confession: I told my situationship I needed space. So he gave me a key to his place. Now I'm over there needing space four nights a week. Roxie's response: Baby, that's not space. That's a lease with benefits.">
+                <span class="fq-deco fq-cherries"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4c-2 8-7 14-11 20M20 4c2 9 6 14 11 19" fill="none" stroke="#7a9a3a" stroke-width="2" stroke-linecap="round"/><path d="M20 4c4-3 9-2 11 1-4 1-8 1-11-1z" fill="#6f8f2f"/><circle cx="10" cy="29" r="8" fill="url(#fqc)"/><circle cx="30" cy="28" r="8" fill="url(#fqc)"/><defs><radialGradient id="fqc" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff9fb8"/><stop offset=".25" stop-color="#e0103f"/><stop offset=".8" stop-color="#6a0016"/><stop offset="1" stop-color="#3a000c"/></radialGradient></defs></svg></span>
+                <svg class="fq-deco fq-coupe" viewBox="0 0 40 60" aria-hidden="true"><path d="M3 6h34c-1 10-8 16-17 16S4 16 3 6z" fill="rgba(255,150,170,.35)" stroke="#F2C9A8" stroke-width="1.2"/><path d="M5 9h30c-2 7-8 11-15 11S7 16 5 9z" fill="#c2304f" opacity=".75"/><path d="M20 22v28M10 54h20" stroke="#F2C9A8" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <svg class="fq-deco fq-lips" viewBox="0 0 60 30" aria-hidden="true"><path d="M2 14C10 4 20 2 30 9 40 2 50 4 58 14 50 16 40 15 30 14 20 15 10 16 2 14z" fill="#d0153f"/><path d="M2 15c10 2 20 2 28 1 8 1 18 1 28-1C50 26 40 29 30 28 20 29 10 26 2 15z" fill="#a80d30"/></svg>
+                <span class="fq-deco fq-pearls" aria-hidden="true"></span>
+                <div class="fq-title" aria-hidden="true"><span class="fq-gold">Confession</span><span class="fq-neon">Line</span></div>
+                <div class="fq-panel" aria-hidden="true">
+                  <span class="fq-star s1"></span><span class="fq-star s2"></span><span class="fq-star s3"></span><span class="fq-star s4"></span>
+                  <p class="fq-beat">I told my situationship I needed <em>space</em>.</p>
+                  <p class="fq-beat">So he gave me a key to his place.</p>
+                  <p class="fq-beat">Now I'm over there <em>"needing space"</em> four nights a week.</p>
+                  <div class="fq-divider">&#9825;</div>
+                  <span class="fq-pill">Roxie's Response:</span>
+                  <p class="fq-response">Baby, that's not space. That's a <b>lease with benefits</b>. 😭💀</p>
+                </div>
+                <div class="fq-logo" aria-hidden="true"><span class="fq-the">The</span><span class="fq-word">FREAKQUENCY</span><span class="fq-rule"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4c-2 8-7 14-11 20M20 4c2 9 6 14 11 19" fill="none" stroke="#7a9a3a" stroke-width="2" stroke-linecap="round"/><path d="M20 4c4-3 9-2 11 1-4 1-8 1-11-1z" fill="#6f8f2f"/><circle cx="10" cy="29" r="8" fill="url(#fqc2)"/><circle cx="30" cy="28" r="8" fill="url(#fqc2)"/><defs><radialGradient id="fqc2" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff9fb8"/><stop offset=".25" stop-color="#e0103f"/><stop offset=".8" stop-color="#6a0016"/><stop offset="1" stop-color="#3a000c"/></radialGradient></defs></svg></span></div>
               </div>
+              <p class="fq-caption">Example Confession Line draft (original, fictional) · Roxie is an AI character</p>
             </section>
             <section class="page-tile milan-tile" aria-label="Meanwhile, Milan example">
               <header>
