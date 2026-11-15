@@ -30,6 +30,7 @@
   font-style:italic;
   font-display:swap;
 }
+
 /* Oddsaint royal prototype — all styles are local. No remote fonts, images, or scripts. */
 :root{
   color-scheme:dark;
@@ -759,9 +760,12 @@ footer{
   .talk-typing span{animation:none;opacity:.8}
 }
 
+.ronnie-clip-bank{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);pointer-events:none}
+.talk-bubble.details{border-style:dashed}
+#hear-ronnie{flex:1 1 100%}
+#read-details,#ronnie-mic{flex:1 1 calc(50% - 8px)}
 </style>
 </head>
-<body>
 <!-- This notice stays visible while scrolling. All numbers and content are examples. Changes stay on this device. -->
 <div class="prototype">
   <svg viewBox="0 0 72 56" aria-hidden="true"><use href="#icon-crown"/></svg>
@@ -918,13 +922,25 @@ footer{
   </div>
   <div class="talk-actions">
     <button type="button" class="btn-gold" id="hear-ronnie">Hear Ronnie</button>
+    <button type="button" class="btn-ghost" id="read-details" disabled>Read details aloud</button>
     <button type="button" class="btn-ghost" id="ronnie-mic" hidden aria-pressed="false">Mic</button>
   </div>
-  <p class="talk-note">Ronnie reads your example dashboard out loud using your device's built-in voice. She isn't connected to any AI model or agents yet.</p>
+  <p class="talk-note">Ronnie's voice lines are pre-recorded with ElevenLabs. Live details are shown as text. She isn't connected to an AI model or agents yet.</p>
 </aside>
 
-<div id="modal-root"></div>
+<div class="ronnie-clip-bank" aria-hidden="true">
+  <audio id="clip-greet" preload="auto" src="assets/voice/greet.mp3"></audio>
+  <audio id="clip-waiting" preload="auto" src="assets/voice/waiting.mp3"></audio>
+  <audio id="clip-empty" preload="auto" src="assets/voice/empty.mp3"></audio>
+  <audio id="clip-done" preload="auto" src="assets/voice/done.mp3"></audio>
+  <audio id="clip-tasks" preload="auto" src="assets/voice/tasks.mp3"></audio>
+  <audio id="clip-hype1" preload="auto" src="assets/voice/hype1.mp3"></audio>
+  <audio id="clip-hype2" preload="auto" src="assets/voice/hype2.mp3"></audio>
+  <audio id="clip-hype3" preload="auto" src="assets/voice/hype3.mp3"></audio>
+  <audio id="clip-hype4" preload="auto" src="assets/voice/hype4.mp3"></audio>
+</div>
 
+<div id="modal-root"></div>
 <script>
 /* BEGINNER NOTE: Edit this one example-data object to change the sample content.
    These are fictional business examples, not actual agent activity or revenue. */
@@ -1439,21 +1455,34 @@ document.addEventListener("input", (event) => {
 render();
 
 
-/* ---- Talk to Ronnie: on-device Web Speech only. No network calls. ---- */
-const VOICE_KEY = "oddsaint-ronnie-voice";
-const HYPE_LINES = [
-  "Queen Lauren, this palace is already looking like a moment. You built this, and it shows.",
-  "Ronnie's at the door and the house is yours. Take your time, then make the next call when you're ready.",
-  "Flirty, focused, and still running the room — that's you, my queen.",
-  "Soft light, gold trim, and you at the center. Come on in. We've got this.",
-  "No rush, no noise, just you and a beautiful plan. I'm right here if you want a recap."
+/* ---- Talk to Ronnie: pre-recorded ElevenLabs clips plus on-device fallback. No live API calls. ---- */
+const VOICE_KEY = "oddsaint-ronnie-voice-v2";
+const RONNIE_RECORDED = "ronnie-recorded";
+const RONNIE_LINES = {
+  greet: "Hey Queen Lauren! Welcome home. Your agents have been busy, so let's go run this empire.",
+  waiting: "Okay boss, here's what's waiting on your royal approval.",
+  empty: "You're all caught up, Queen. Nothing's waiting on you right now.",
+  done: "Look at us! Here's what's finished and ready for your eyes.",
+  tasks: "Here's what's on everybody's plate right now.",
+  unknown: "I can tell you what's waiting, what's done, read your tasks, or hype you up."
+};
+const HYPE_CLIPS = [
+  {id:"hype1", text:"Crown on, shoulders back. You run this, Queen."},
+  {id:"hype2", text:"Queens don't chase, we approve. Now let's handle business."},
+  {id:"hype3", text:"Okay, Miss CEO! Hydrate, slay, repeat."},
+  {id:"hype4", text:"Girl, the vision? Immaculate. Let's get to work."}
 ];
+const CLIP_IDS = ["greet","waiting","empty","done","tasks","hype1","hype2","hype3","hype4"];
 let ronnieMuted = false;
-let selectedVoiceURI = "";
-try{ selectedVoiceURI = localStorage.getItem(VOICE_KEY) || ""; }catch(e){ selectedVoiceURI = ""; }
+let selectedVoiceURI = RONNIE_RECORDED;
+try{
+  const saved = localStorage.getItem(VOICE_KEY);
+  if(saved) selectedVoiceURI = saved;
+}catch(e){}
 let talkTypingTimer = null;
 let recognition = null;
 let recognizing = false;
+let lastDetailsText = "";
 window.__ronnieSpeakCalls = [];
 
 function dashboardSnapshot(){
@@ -1474,19 +1503,16 @@ function plural(n, word){
   return n + " " + word + (n === 1 ? "" : "s");
 }
 
-function intentText(intent){
+function detailsFor(intent){
   const snap = dashboardSnapshot();
   if(intent === "greet"){
-    return "Hey Queen Lauren, welcome home. You've got " +
+    return "Live from your example dashboard: " +
       plural(snap.pending.length, "approval") + " waiting and " +
-      plural(snap.openTasks, "open task") + " on your example dashboard.";
+      plural(snap.openTasks, "open task") + ".";
   }
   if(intent === "waiting"){
-    if(!snap.pending.length){
-      return "You're all caught up, Queen Lauren. Nothing is waiting on your approval on this example dashboard.";
-    }
-    const items = snap.pending.map((item) => item.title + ", from " + agentName(item.agent)).join(". ");
-    return "Here's what's waiting on you: " + items + ".";
+    if(!snap.pending.length) return "";
+    return snap.pending.map((item) => item.title + ", from " + agentName(item.agent)).join(". ") + ".";
   }
   if(intent === "done"){
     const work = snap.completed.map((item) => item.title + ", from " + agentName(item.agent));
@@ -1501,16 +1527,22 @@ function intentText(intent){
     if(!snap.openList.length){
       return "Every example task is checked off, Queen Lauren. Your list is clear.";
     }
-    const parts = snap.openList.map((row) =>
+    return snap.openList.map((row) =>
       row.name + ": " + row.tasks.map((task) => task.title).join(", ")
-    );
-    return "Here are your open example tasks. " + parts.join(". ") + ".";
+    ).join(". ") + ".";
   }
-  if(intent === "hype"){
-    const line = HYPE_LINES[Math.floor(Math.random() * HYPE_LINES.length)];
-    return line;
+  return "";
+}
+
+function intentText(intent, hype){
+  if(intent === "greet") return RONNIE_LINES.greet;
+  if(intent === "waiting"){
+    return dashboardSnapshot().pending.length ? RONNIE_LINES.waiting : RONNIE_LINES.empty;
   }
-  return "I can tell you what's waiting, what's done, read your tasks, or hype you up.";
+  if(intent === "done") return RONNIE_LINES.done;
+  if(intent === "tasks") return RONNIE_LINES.tasks;
+  if(intent === "hype") return (hype || HYPE_CLIPS[0]).text;
+  return RONNIE_LINES.unknown;
 }
 
 function matchSpokenIntent(transcript){
@@ -1519,10 +1551,13 @@ function matchSpokenIntent(transcript){
   if(/wait|approv|pending|need me|on me/.test(t)) return "waiting";
   if(/done|complete|finished|already did/.test(t)) return "done";
   if(/task|to-?do|read my list|what's open|whats open/.test(t)) return "tasks";
-  if(/hype|pump|motivate|celebrate|love me|cheer|queen/.test(t) && !/lauren/.test(t)) return "hype";
-  if(/hype|pump|motivate|cheer|encourage/.test(t)) return "hype";
+  if(/hype|pump|motivate|celebrate|cheer|encourage/.test(t)) return "hype";
   if(/hello|hey|hi |greet|welcome|what's up|whats up|how are you/.test(t)) return "greet";
   return null;
+}
+
+function isRonnieVoice(){
+  return selectedVoiceURI === RONNIE_RECORDED || selectedVoiceURI === "";
 }
 
 function availableVoices(){
@@ -1534,16 +1569,16 @@ function pickDefaultVoice(voices){
   if(!voices.length) return null;
   const english = voices.filter((v) => /^en\b/i.test(v.lang));
   const pool = english.length ? english : voices;
-  const female = /female|samantha|moira|karen|victoria|zira|fiona|tessa|serena|susan|allison|ava|kathy|helen|linda|hazel|martha|nicky|aria|jenny|sonia|veena|raveena|samantha|google uk english female|microsoft (zira|aria|jenny|susan)/i;
+  const female = /female|samantha|moira|karen|victoria|zira|fiona|tessa|serena|susan|allison|ava|kathy|helen|linda|hazel|martha|nicky|aria|jenny|sonia|veena|raveena|google uk english female|microsoft (zira|aria|jenny|susan)/i;
   return pool.find((v) => female.test(v.name)) ||
     pool.find((v) => /female/i.test(v.name) || /female/i.test(v.lang)) ||
     pool[0];
 }
 
-function currentVoice(){
+function currentDeviceVoice(){
   const voices = availableVoices();
   if(!voices.length) return null;
-  if(selectedVoiceURI){
+  if(selectedVoiceURI && selectedVoiceURI !== RONNIE_RECORDED){
     const saved = voices.find((v) => (v.voiceURI || v.name) === selectedVoiceURI);
     if(saved) return saved;
   }
@@ -1554,28 +1589,31 @@ function fillVoicePicker(){
   const select = $("ronnie-voice");
   if(!select) return;
   const voices = availableVoices();
-  const previous = selectedVoiceURI;
+  const previous = selectedVoiceURI || RONNIE_RECORDED;
   select.innerHTML = "";
-  if(!voices.length){
+  const recorded = document.createElement("option");
+  recorded.value = RONNIE_RECORDED;
+  recorded.textContent = "Ronnie (her real voice)";
+  select.appendChild(recorded);
+  if(voices.length){
+    const group = document.createElement("optgroup");
+    group.label = "Device voice fallback";
+    voices.forEach((voice) => {
+      const option = document.createElement("option");
+      option.value = voice.voiceURI || voice.name;
+      option.textContent = voice.name + (voice.lang ? " (" + voice.lang + ")" : "");
+      group.appendChild(option);
+    });
+    select.appendChild(group);
+  }else{
     const option = document.createElement("option");
-    option.value = "";
-    option.textContent = "Default device voice";
+    option.value = "device-default";
+    option.textContent = "Device voice";
     select.appendChild(option);
-    return;
   }
-  voices.forEach((voice) => {
-    const option = document.createElement("option");
-    option.value = voice.voiceURI || voice.name;
-    option.textContent = voice.name + (voice.lang ? " (" + voice.lang + ")" : "");
-    select.appendChild(option);
-  });
-  const chosen = currentVoice();
-  if(chosen){
-    select.value = chosen.voiceURI || chosen.name;
-    selectedVoiceURI = select.value;
-  }else if(previous){
-    select.value = previous;
-  }
+  const values = Array.from(select.options).map((o) => o.value);
+  select.value = values.includes(previous) ? previous : RONNIE_RECORDED;
+  selectedVoiceURI = select.value;
 }
 
 function setSpeaking(on){
@@ -1583,20 +1621,60 @@ function setSpeaking(on){
   $("fab-avatar-wrap") && $("fab-avatar-wrap").classList.toggle("is-speaking", !!on);
 }
 
+function clipElements(){
+  return CLIP_IDS.map((id) => $("clip-" + id)).filter(Boolean);
+}
+
+function stopClips(){
+  clipElements().forEach((el) => {
+    try{ el.pause(); el.currentTime = 0; }catch(e){}
+  });
+}
+
 function stopSpeaking(){
   try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+  stopClips();
   setSpeaking(false);
 }
 
-function speakRonnie(text){
-  window.__ronnieSpeakCalls.push(text);
+function playRonnieClip(clipId){
+  window.__ronnieSpeakCalls.push({type:"clip", id:clipId});
+  const el = $("clip-" + clipId);
+  if(!el){ setSpeaking(false); return; }
+  stopClips();
+  try{ if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+  if(ronnieMuted){
+    setSpeaking(false);
+    return;
+  }
+  try{ el.currentTime = 0; }catch(e){}
+  const playPromise = el.play();
+  if(playPromise && playPromise.catch){
+    playPromise.catch(() => setSpeaking(false));
+  }
+}
+
+function setupClipEvents(){
+  clipElements().forEach((el) => {
+    el.addEventListener("play", () => setSpeaking(true));
+    el.addEventListener("playing", () => setSpeaking(true));
+    el.addEventListener("ended", () => setSpeaking(false));
+    el.addEventListener("pause", () => {
+      if(el.ended || ronnieMuted || el.currentTime === 0) setSpeaking(false);
+    });
+    el.addEventListener("error", () => setSpeaking(false));
+  });
+}
+
+function speakWithDevice(text){
+  window.__ronnieSpeakCalls.push({type:"device", text:text});
   if(ronnieMuted || !window.speechSynthesis){
     setSpeaking(false);
     return;
   }
   stopSpeaking();
   const utterance = new SpeechSynthesisUtterance(text);
-  const voice = currentVoice();
+  const voice = currentDeviceVoice();
   if(voice) utterance.voice = voice;
   utterance.rate = 0.98;
   utterance.pitch = 1.04;
@@ -1606,13 +1684,19 @@ function speakRonnie(text){
   speechSynthesis.speak(utterance);
 }
 
-function appendBubble(role, text){
+function setLastDetails(text){
+  lastDetailsText = text || "";
+  const btn = $("read-details");
+  if(btn) btn.disabled = !lastDetailsText;
+}
+
+function appendBubble(role, text, extraClass){
   const log = $("ronnie-chat");
   if(!log) return;
-  const typing = log.querySelector(".talk-typing");
+  const typing = log.querySelector(".talk-typing-wrap");
   if(typing) typing.remove();
   const bubble = document.createElement("div");
-  bubble.className = "talk-bubble" + (role === "user" ? " user" : "");
+  bubble.className = "talk-bubble" + (role === "user" ? " user" : "") + (extraClass ? " " + extraClass : "");
   const who = document.createElement("span");
   who.className = "who";
   who.textContent = role === "user" ? "You" : "Ronnie";
@@ -1625,7 +1709,7 @@ function appendBubble(role, text){
 function showTyping(){
   const log = $("ronnie-chat");
   if(!log) return;
-  const existing = log.querySelector(".talk-typing");
+  const existing = log.querySelector(".talk-typing-wrap");
   if(existing) existing.remove();
   const row = document.createElement("div");
   row.className = "talk-bubble talk-typing-wrap";
@@ -1639,14 +1723,52 @@ function askRonnie(intent, userText){
   showTyping();
   if(talkTypingTimer) clearTimeout(talkTypingTimer);
   const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const delay = reduce ? 0 : 550;
+  const delay = reduce ? 0 : 450;
   talkTypingTimer = setTimeout(() => {
-    const text = intentText(intent);
     const log = $("ronnie-chat");
     const typing = log && log.querySelector(".talk-typing-wrap");
     if(typing) typing.remove();
-    appendBubble("ronnie", text);
-    speakRonnie(text);
+    const snap = dashboardSnapshot();
+    let clipId = null;
+    let line = "";
+    let details = "";
+    let hype = null;
+    if(intent === "greet"){
+      clipId = "greet";
+      line = RONNIE_LINES.greet;
+      details = detailsFor("greet");
+    }else if(intent === "waiting"){
+      clipId = snap.pending.length ? "waiting" : "empty";
+      line = RONNIE_LINES[clipId];
+      details = detailsFor("waiting");
+    }else if(intent === "done"){
+      clipId = "done";
+      line = RONNIE_LINES.done;
+      details = detailsFor("done");
+    }else if(intent === "tasks"){
+      clipId = "tasks";
+      line = RONNIE_LINES.tasks;
+      details = detailsFor("tasks");
+    }else if(intent === "hype"){
+      hype = HYPE_CLIPS[Math.floor(Math.random() * HYPE_CLIPS.length)];
+      clipId = hype.id;
+      line = hype.text;
+    }else{
+      line = RONNIE_LINES.unknown;
+    }
+    appendBubble("ronnie", line);
+    if(details){
+      appendBubble("ronnie", details, "details");
+      setLastDetails(details);
+    }else if(intent !== "hype" && intent !== "unknown"){
+      setLastDetails("");
+    }
+    if(isRonnieVoice() && clipId){
+      playRonnieClip(clipId);
+    }else{
+      const spoken = details ? (line + " " + details) : line;
+      speakWithDevice(spoken);
+    }
   }, delay);
 }
 
@@ -1728,7 +1850,7 @@ function setupMic(){
   };
   recognition.onerror = () => {
     stopMic();
-    appendBubble("ronnie", "I couldn't hear that just now. You can tap a chip or type with the buttons above.");
+    appendBubble("ronnie", "I couldn't hear that just now. You can tap a chip or use the buttons above.");
   };
   recognition.onend = () => stopMic();
   mic.addEventListener("click", () => {
@@ -1764,6 +1886,7 @@ function setupHeroMotion(){
 
 function setupTalk(){
   fillVoicePicker();
+  setupClipEvents();
   if(window.speechSynthesis){
     speechSynthesis.addEventListener("voiceschanged", fillVoicePicker);
   }
@@ -1781,6 +1904,10 @@ function setupTalk(){
   $("ronnie-mute").addEventListener("click", toggleMute);
   $("hear-ronnie").addEventListener("click", () => askRonnie("greet"));
   $("hear-ronnie-avatar").addEventListener("click", () => askRonnie("greet"));
+  $("read-details").addEventListener("click", () => {
+    if(!lastDetailsText) return;
+    speakWithDevice(lastDetailsText);
+  });
   document.querySelectorAll("[data-ronnie-intent]").forEach((btn) => {
     btn.addEventListener("click", () => askRonnie(btn.dataset.ronnieIntent, btn.textContent));
   });
@@ -1795,7 +1922,6 @@ function setupTalk(){
 }
 
 setupTalk();
-
 </script>
 </body>
 </html>
