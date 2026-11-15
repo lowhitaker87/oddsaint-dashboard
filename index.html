@@ -480,6 +480,18 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   color:#6e4e0e;
   border-color:rgba(168,130,40,.45);
 }
+.ronnie-live-status.is-error{
+  color:#f3e0a6;
+  border-color:rgba(240,195,106,.7);
+  background:rgba(48,20,24,.72);
+  text-transform:none;
+  letter-spacing:.02em;
+}
+[data-theme="light"] .ronnie-live-status.is-error{
+  color:#6e4e0e;
+  background:rgba(255,236,210,.95);
+  border-color:rgba(168,130,40,.55);
+}
 .cinema-cta{
   min-height:52px;
   padding:12px 22px;
@@ -2136,56 +2148,61 @@ function showTyping(){
   log.scrollTop = log.scrollHeight;
 }
 
+function resolveRonnieReply(intent){
+  const snap = dashboardSnapshot();
+  let clipId = null;
+  let line = "";
+  let details = "";
+  if(intent === "greet"){
+    clipId = "greet";
+    line = RONNIE_LINES.greet;
+    details = detailsFor("greet");
+  }else if(intent === "waiting"){
+    clipId = snap.pending.length ? "waiting" : "empty";
+    line = RONNIE_LINES[clipId];
+    details = detailsFor("waiting");
+  }else if(intent === "done"){
+    clipId = "done";
+    line = RONNIE_LINES.done;
+    details = detailsFor("done");
+  }else if(intent === "tasks"){
+    clipId = "tasks";
+    line = RONNIE_LINES.tasks;
+    details = detailsFor("tasks");
+  }else if(intent === "hype"){
+    const hype = HYPE_CLIPS[Math.floor(Math.random() * HYPE_CLIPS.length)];
+    clipId = hype.id;
+    line = hype.text;
+  }else{
+    line = RONNIE_LINES.unknown;
+  }
+  return { clipId, line, details };
+}
+
 function askRonnie(intent, userText){
   if(userText) appendBubble("user", userText);
+  const reply = resolveRonnieReply(intent);
+  // Start audio inside the tap handler so iOS Safari will play it.
+  if(isRonnieVoice() && reply.clipId){
+    playRonnieClip(reply.clipId);
+  }else{
+    const spoken = reply.details ? (reply.line + " " + reply.details) : reply.line;
+    speakWithDevice(spoken);
+  }
   showTyping();
   if(talkTypingTimer) clearTimeout(talkTypingTimer);
-  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduce = prefersReducedMotion();
   const delay = reduce ? 0 : 450;
   talkTypingTimer = setTimeout(() => {
     const log = $("ronnie-chat");
     const typing = log && log.querySelector(".talk-typing-wrap");
     if(typing) typing.remove();
-    const snap = dashboardSnapshot();
-    let clipId = null;
-    let line = "";
-    let details = "";
-    let hype = null;
-    if(intent === "greet"){
-      clipId = "greet";
-      line = RONNIE_LINES.greet;
-      details = detailsFor("greet");
-    }else if(intent === "waiting"){
-      clipId = snap.pending.length ? "waiting" : "empty";
-      line = RONNIE_LINES[clipId];
-      details = detailsFor("waiting");
-    }else if(intent === "done"){
-      clipId = "done";
-      line = RONNIE_LINES.done;
-      details = detailsFor("done");
-    }else if(intent === "tasks"){
-      clipId = "tasks";
-      line = RONNIE_LINES.tasks;
-      details = detailsFor("tasks");
-    }else if(intent === "hype"){
-      hype = HYPE_CLIPS[Math.floor(Math.random() * HYPE_CLIPS.length)];
-      clipId = hype.id;
-      line = hype.text;
-    }else{
-      line = RONNIE_LINES.unknown;
-    }
-    appendBubble("ronnie", line);
-    if(details){
-      appendBubble("ronnie", details, "details");
-      setLastDetails(details);
+    appendBubble("ronnie", reply.line);
+    if(reply.details){
+      appendBubble("ronnie", reply.details, "details");
+      setLastDetails(reply.details);
     }else if(intent !== "hype" && intent !== "unknown"){
       setLastDetails("");
-    }
-    if(isRonnieVoice() && clipId){
-      playRonnieClip(clipId);
-    }else{
-      const spoken = details ? (line + " " + details) : line;
-      speakWithDevice(spoken);
     }
   }, delay);
 }
@@ -2318,6 +2335,7 @@ const LIVE_STATUS_LABELS = {
 let liveConversation = null;
 let liveStarting = false;
 let liveStatus = "";
+let liveMicStream = null;
 
 function setLiveFrame(on){
   const frame = $("cinema-frame");
@@ -2330,6 +2348,7 @@ function setLiveStatus(status){
   const pill = $("ronnie-live-status");
   const button = $("talk-live");
   if(pill){
+    pill.classList.remove("is-error");
     if(!status){
       pill.hidden = true;
       pill.textContent = "";
@@ -2345,18 +2364,56 @@ function setLiveStatus(status){
   }
 }
 
-function resetLiveUi(){
+function showLiveError(message){
+  liveStatus = "error";
+  const pill = $("ronnie-live-status");
+  const button = $("talk-live");
+  if(pill){
+    pill.hidden = false;
+    pill.textContent = message;
+    pill.classList.add("is-error");
+  }
+  if(button){
+    button.textContent = "Talk to Ronnie live";
+    button.setAttribute("aria-pressed", "false");
+  }
+}
+
+function formatLiveError(err){
+  const name = err && err.name ? String(err.name) : "";
+  const text = err && (err.message || err.reason || err.closeReason) ? String(err.message || err.reason || err.closeReason) : String(err || "");
+  const combined = (name + " " + text).toLowerCase();
+  if(/notallowed|permissiondenied|permissiondeniederror/.test(combined) || (/microphone|getusermedia|mic/.test(combined) && /denied|block|permission|notallowed/.test(combined))){
+    return "Mic blocked: allow microphone";
+  }
+  if(/notfounderror|no microphone|requested device not found/.test(combined)){
+    return "Couldn't connect: no microphone";
+  }
+  return "Couldn't connect: tap to retry";
+}
+
+function stopLiveMicPreview(){
+  if(!liveMicStream) return;
+  try{
+    liveMicStream.getTracks().forEach((track) => track.stop());
+  }catch(e){}
+  liveMicStream = null;
+}
+
+function resetLiveUi(keepError){
   liveConversation = null;
   liveStarting = false;
+  stopLiveMicPreview();
   setLiveFrame(false);
   setSpeaking(false);
-  setLiveStatus("");
+  if(!keepError) setLiveStatus("");
 }
 
 async function endLiveRonnie(){
   const conversation = liveConversation;
   liveConversation = null;
   liveStarting = false;
+  stopLiveMicPreview();
   try{
     if(conversation && typeof conversation.endSession === "function"){
       await conversation.endSession();
@@ -2369,6 +2426,16 @@ async function endLiveRonnie(){
   setLiveStatus("");
 }
 
+async function requestLiveMic(){
+  if(!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function"){
+    const err = new Error("Microphone access is not available in this browser.");
+    err.name = "NotFoundError";
+    throw err;
+  }
+  liveMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  return liveMicStream;
+}
+
 async function startLiveRonnie(){
   if(liveConversation || liveStarting){
     await endLiveRonnie();
@@ -2376,6 +2443,7 @@ async function startLiveRonnie(){
   }
   const Conversation = window.ElevenLabsClient && window.ElevenLabsClient.Conversation;
   if(!Conversation || typeof Conversation.startSession !== "function"){
+    showLiveError("Couldn't connect: tap to retry");
     console.warn("Ronnie live chat could not start. The ElevenLabs client did not load.");
     return;
   }
@@ -2383,14 +2451,26 @@ async function startLiveRonnie(){
   setLiveFrame(true);
   setLiveStatus("connecting");
   try{
+    await requestLiveMic();
+  }catch(err){
+    liveStarting = false;
+    setLiveFrame(false);
+    setSpeaking(false);
+    showLiveError(formatLiveError(err));
+    console.warn("Ronnie live chat could not start.", err);
+    return;
+  }
+  try{
     liveConversation = await Conversation.startSession({
       agentId: RONNIE_AGENT_ID,
+      connectionType: "websocket",
       onConnect: () => {
         setLiveFrame(true);
-        if(liveStatus === "connecting") setLiveStatus("listening");
+        if(liveStatus === "connecting" || liveStatus === "error") setLiveStatus("listening");
       },
       onDisconnect: () => {
-        resetLiveUi();
+        const keepError = liveStatus === "error";
+        resetLiveUi(keepError);
       },
       onModeChange: (event) => {
         const mode = event && event.mode;
@@ -2405,17 +2485,23 @@ async function startLiveRonnie(){
       onStatusChange: (event) => {
         const status = event && event.status;
         if(status === "connecting") setLiveStatus("connecting");
-        else if(status === "connected" && liveStatus === "connecting") setLiveStatus("listening");
-        else if(status === "disconnected") resetLiveUi();
+        else if(status === "connected" && (liveStatus === "connecting" || liveStatus === "error")) setLiveStatus("listening");
       },
       onError: (message) => {
         console.warn("Ronnie live chat error.", message);
+        showLiveError(formatLiveError(message));
       }
     });
     liveStarting = false;
+    stopLiveMicPreview();
     if(liveStatus === "connecting") setLiveStatus("listening");
   }catch(err){
-    resetLiveUi();
+    liveStarting = false;
+    liveConversation = null;
+    stopLiveMicPreview();
+    setLiveFrame(false);
+    setSpeaking(false);
+    showLiveError(formatLiveError(err));
     console.warn("Ronnie live chat could not start.", err);
   }
 }
