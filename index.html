@@ -1127,10 +1127,9 @@ footer{
 #hear-ronnie{flex:1 1 100%}
 #read-details,#ronnie-mic{flex:1 1 calc(50% - 8px)}
 
-/* ---- Agent squad: Roxie (live) + Nyx (coming soon). Same royal gold language as Ronnie. ---- */
+/* ---- Agent squad: Roxie + Nyx (both live). Same royal gold language as Ronnie. ---- */
 .squad{margin:6px 0 30px}
 .squad-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
-@media (min-width:1024px){.squad-grid{grid-template-columns:minmax(0,1fr) 230px}}
 .squad-card{
   position:relative;min-width:0;
   background:linear-gradient(165deg,var(--panel-2),var(--panel));
@@ -1225,14 +1224,29 @@ footer{
 .mc-handle{color:#6b7280;font-size:13px}
 .mc-dots{margin-left:auto;color:#6b7280;font-size:18px;letter-spacing:1px;align-self:flex-start}
 .mc-quote{font-size:clamp(18px,2vw,25px);line-height:1.32;font-weight:500;color:#111;text-transform:lowercase;margin:0}
-.nyx-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;min-height:220px;opacity:.92}
-.nyx-mark{
-  width:84px;height:84px;border-radius:50%;display:grid;place-items:center;
-  font-family:var(--font-royal);font-size:36px;color:#c9b8ff;
-  border:1px solid rgba(201,184,255,.55);
-  background:radial-gradient(circle at 35% 30%,rgba(140,110,230,.3),rgba(10,6,20,.8));
-}
-.nyx-card .roxie-name{font-size:30px}
+/* Nyx (Oddsaint After Dark): same card as Roxie, copper/rose accents from her bible palette. */
+.nyx-card{border-color:rgba(183,110,69,.55)}
+.nyx-frame{--aura-1:232,180,150;--aura-2:183,110,69;--aura-3:255,226,206;border-color:rgba(183,110,69,.8);background:radial-gradient(ellipse at 50% 30%,#3a1d16,#0b0b0d 70%)}
+[data-theme="light"] .nyx-frame{--aura-1:200,130,90;--aura-2:160,90,50;--aura-3:255,220,190}
+.nyx-frame img{object-position:50% 18%}
+.nyx-card .roxie-monogram{color:#e8d7be}
+.lane-list{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+.lane{display:inline-flex;align-items:center;gap:6px;font-size:12px;border-radius:999px;padding:5px 10px;border:1px solid var(--border);color:var(--muted);min-width:0}
+.lane b{color:var(--text);font-weight:600}
+.lane i{font-style:normal;font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.lane.is-on{border-color:rgba(183,110,69,.7);background:rgba(183,110,69,.14)}
+.lane.is-on i{color:#e3a27a}
+[data-theme="light"] .lane.is-on i{color:#8a4a24}
+.lane.is-soon{border-style:dashed;opacity:.85}
+.nyx-pair{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;grid-column:1/-1}
+.nyx-tile{background:linear-gradient(160deg,rgba(17,28,50,.6),rgba(11,11,13,.75));border-color:rgba(183,110,69,.4)}
+[data-theme="light"] .nyx-tile{background:linear-gradient(160deg,rgba(17,28,50,.06),rgba(183,110,69,.08))}
+.nyx-post{border-radius:12px;padding:16px;background:#0B0B0D;color:#E8D7BE;border:1px solid rgba(183,110,69,.45);max-width:640px}
+.nyx-post .np-kicker{font-family:var(--font-royal);font-size:11px;letter-spacing:.2em;color:#D985A6;text-transform:uppercase}
+.nyx-post p{font-family:var(--font-display);font-size:18px;line-height:1.35;margin-top:6px}
+.nyx-post .np-tags{font-size:12px;color:#B76E79;margin-top:8px;word-break:break-word}
+.nyx-post .np-sign{font-size:11px;color:#A8ABB5;margin-top:10px;letter-spacing:.06em}
+.nyx-tile .page-avatar{border-color:#B76E45;box-shadow:0 0 14px rgba(183,110,69,.35)}
 @media (prefers-reduced-motion:reduce){.roxie-frame{--vox:.35!important}}
 
 .page-id{display:flex;align-items:center;gap:10px;min-width:0}
@@ -1399,11 +1413,45 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
             </section>
           </div>
         </article>
-        <article class="squad-card nyx-card" aria-labelledby="nyx-name">
-          <span class="nyx-mark" aria-hidden="true">N</span>
-          <p class="eyebrow">After Dark</p>
-          <h3 id="nyx-name" class="roxie-name">Nyx</h3>
-          <span class="tag">Coming soon</span>
+        <article class="squad-card roxie-card nyx-card" aria-labelledby="nyx-name">
+          <figure class="roxie-frame nyx-frame" id="nyx-frame">
+            <picture>
+              <source type="image/webp" srcset="assets/nyx-card.webp">
+              <img id="nyx-photo" src="assets/nyx-card.jpg" alt="AI-generated portrait of Nyx, the Oddsaint After Dark host" width="576" height="720" loading="lazy" decoding="async">
+            </picture>
+            <div class="roxie-monogram" aria-hidden="true"><b>N</b><small>Nyx photo coming</small></div>
+            <div class="roxie-aura" aria-hidden="true"></div>
+            <figcaption class="ai-label">AI-generated</figcaption>
+          </figure>
+          <div class="roxie-body">
+            <p class="eyebrow">Oddsaint After Dark</p>
+            <h3 id="nyx-name" class="roxie-name">Nyx</h3>
+            <p class="roxie-tagline">The mysterious it girl of Nocturne City: dry wit, midnight coffee, and late-night ideas, cooking up drafts you post yourself.</p>
+            <ul class="lane-list" aria-label="Nyx's platform lanes">
+              <li class="lane is-on"><b>Instagram</b> @afterhourswithnyx <i>Active</i></li>
+              <li class="lane is-soon"><b>X</b> <i>Coming soon</i></li>
+              <li class="lane is-soon"><b>Fanvue</b> <i>Coming soon</i></li>
+            </ul>
+            <div class="roxie-actions">
+              <button type="button" class="btn-gold" id="nyx-talk-live" aria-pressed="false">Talk to Nyx live</button>
+              <span id="nyx-live-status" class="ronnie-live-status" hidden aria-live="polite"></span>
+            </div>
+            <p class="roxie-credit">Live chats use your ElevenLabs credits per minute. She speaks in her own ElevenLabs voice. Instagram drafts stay mainstream; after-hours ideas wait for X and Fanvue. Remember to turn on the AI label when you post.</p>
+          </div>
+          <div class="nyx-pair">
+            <section class="page-tile nyx-tile" aria-label="Nyx Instagram example">
+              <header>
+                <div class="page-id"><span class="page-avatar"><picture><source type="image/webp" srcset="assets/nyx-avatar.webp"><img src="assets/nyx-avatar.jpg" alt="AI-generated Nyx" width="128" height="128" loading="lazy" decoding="async"></picture></span><div><h4>AFTER HOURS WITH NYX</h4><div class="page-meta">@afterhourswithnyx · Nyx Monroe (AI) · Instagram</div></div></div>
+                <span class="example-chip">Example draft</span>
+              </header>
+              <div class="nyx-post">
+                <div class="np-kicker">Too Expensive for a Tuesday</div>
+                <p>Full glam. New boots. Nowhere to be. I made it as far as the elevator, looked at it, and decided it hadn't earned me. Staying in.</p>
+                <div class="np-tags">#TooExpensiveForATuesday #NocturneCity #AfterDarkWithNyx</div>
+                <div class="np-sign">Nyx is an AI character</div>
+              </div>
+            </section>
+          </div>
         </article>
       </div>
     </section>
@@ -2756,8 +2804,9 @@ async function startLiveRonnie(){
     await endLiveRonnie();
     return;
   }
-  // One live chat at a time: hang up Roxie first.
+  // One live chat at a time: hang up Roxie and Nyx first.
   if(typeof isRoxieLive === "function" && isRoxieLive()) await endLiveRoxie();
+  if(typeof isNyxLive === "function" && isNyxLive()) await endLiveNyx();
   const Conversation = window.ElevenLabsClient && window.ElevenLabsClient.Conversation;
   if(!Conversation || typeof Conversation.startSession !== "function"){
     showLiveError("Couldn't connect: tap to retry");
@@ -2963,6 +3012,7 @@ async function startLiveRoxie(){
   if(isRoxieLive()){ await endLiveRoxie(); return; }
   // One live chat at a time: hang up Ronnie (and stop any quick line) first.
   if(isRonnieLive()) await endLiveRonnie();
+  if(typeof isNyxLive === "function" && isNyxLive()) await endLiveNyx();
   try{ stopSpeaking(); }catch(e){}
   const Conversation = window.ElevenLabsClient && window.ElevenLabsClient.Conversation;
   if(!Conversation || typeof Conversation.startSession !== "function"){
@@ -3033,6 +3083,159 @@ async function startLiveRoxie(){
   }
 }
 
+/* ---- Talk to Nyx live (ElevenLabs agent, websocket like Ronnie). Only one live chat at a time. ---- */
+const NYX_AGENT_ID = "agent_0201m7gqfq6nejfsx678jck67d3y";
+const NYX_STATUS_LABELS = { connecting: "Connecting", listening: "Listening", speaking: "Nyx is talking" };
+let nyxConversation = null;
+let nyxStarting = false;
+let nyxStatus = "";
+let nyxMicStream = null;
+let nyxRaf = 0, nyxAura = 0, nyxLast = 0;
+
+function nyxTick(now){
+  const frame = $("nyx-frame");
+  const dt = nyxLast ? Math.min(100, now - nyxLast) : 16.7;
+  nyxLast = now;
+  let raw = 0;
+  if(nyxConversation){
+    try{ const v = nyxConversation.getOutputVolume(); if(typeof v === "number" && isFinite(v)) raw = v; }catch(e){}
+  }
+  const g = (raw - 0.15) / 0.3;
+  const target = g <= 0 ? 0 : g >= 1 ? 1 : Math.pow(g, 1.2);
+  const k = target > nyxAura ? 0.22 : 0.07;
+  nyxAura += (target - nyxAura) * (1 - Math.pow(1 - k, dt / 16.7));
+  if(target === 0 && nyxAura < 0.01) nyxAura = 0;
+  if(frame) frame.style.setProperty("--vox", String(Math.round(nyxAura * 1000) / 1000));
+  window.__nyxVox = { raw, aura: nyxAura, max: Math.max((window.__nyxVox || {}).max || 0, nyxAura) };
+  if(nyxConversation || nyxStarting || nyxAura > 0){ nyxRaf = requestAnimationFrame(nyxTick); }
+  else { nyxRaf = 0; nyxLast = 0; }
+}
+function nyxWake(){ if(!nyxRaf) nyxRaf = requestAnimationFrame(nyxTick); }
+
+function setNyxFrame(on){
+  const frame = $("nyx-frame");
+  if(frame) frame.classList.toggle("is-live", !!on);
+  nyxWake();
+}
+
+function setNyxStatus(status){
+  nyxStatus = status || "";
+  const pill = $("nyx-live-status");
+  const button = $("nyx-talk-live");
+  if(pill){
+    pill.classList.remove("is-error");
+    pill.hidden = !status;
+    pill.textContent = status ? (NYX_STATUS_LABELS[status] || status) : "";
+  }
+  if(button){
+    button.textContent = status ? "End chat" : "Talk to Nyx live";
+    button.setAttribute("aria-pressed", status ? "true" : "false");
+  }
+}
+
+function showNyxError(message){
+  nyxStatus = "error";
+  const pill = $("nyx-live-status");
+  const button = $("nyx-talk-live");
+  if(pill){ pill.hidden = false; pill.textContent = message; pill.classList.add("is-error"); }
+  if(button){ button.textContent = "Talk to Nyx live"; button.setAttribute("aria-pressed", "false"); }
+}
+
+function stopNyxMic(){
+  if(!nyxMicStream) return;
+  try{ nyxMicStream.getTracks().forEach((t) => t.stop()); }catch(e){}
+  nyxMicStream = null;
+}
+
+function isNyxLive(){ return !!(nyxConversation || nyxStarting); }
+
+async function endLiveNyx(){
+  const conversation = nyxConversation;
+  nyxConversation = null;
+  nyxStarting = false;
+  stopNyxMic();
+  try{
+    if(conversation && typeof conversation.endSession === "function") await conversation.endSession();
+  }catch(err){ console.warn("Nyx live chat could not end.", err); }
+  setNyxFrame(false);
+  setNyxStatus("");
+}
+
+async function startLiveNyx(){
+  if(isNyxLive()){ await endLiveNyx(); return; }
+  // One live chat at a time: hang up Ronnie and Roxie (and stop any quick line) first.
+  if(isRonnieLive()) await endLiveRonnie();
+  if(isRoxieLive()) await endLiveRoxie();
+  try{ stopSpeaking(); }catch(e){}
+  const Conversation = window.ElevenLabsClient && window.ElevenLabsClient.Conversation;
+  if(!Conversation || typeof Conversation.startSession !== "function"){
+    showNyxError("Couldn't connect: tap to retry");
+    console.warn("Nyx live chat could not start. The ElevenLabs client did not load.");
+    return;
+  }
+  nyxStarting = true;
+  setNyxFrame(true);
+  setNyxStatus("connecting");
+  try{
+    if(!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function"){
+      const e = new Error("Microphone access is not available in this browser."); e.name = "NotFoundError"; throw e;
+    }
+    nyxMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  }catch(err){
+    nyxStarting = false;
+    setNyxFrame(false);
+    showNyxError(formatLiveError(err));
+    console.warn("Nyx live chat could not start.", err);
+    return;
+  }
+  try{
+    const conv = await Conversation.startSession({
+      agentId: NYX_AGENT_ID,
+      connectionType: "websocket",
+      onConnect: () => {
+        setNyxFrame(true);
+        if(nyxStatus === "connecting" || nyxStatus === "error") setNyxStatus("listening");
+      },
+      onDisconnect: () => {
+        const keepError = nyxStatus === "error";
+        nyxConversation = null;
+        nyxStarting = false;
+        stopNyxMic();
+        setNyxFrame(false);
+        if(!keepError) setNyxStatus("");
+      },
+      onModeChange: (event) => {
+        const mode = event && event.mode;
+        if(mode === "speaking") setNyxStatus("speaking");
+        else if(mode === "listening") setNyxStatus("listening");
+      },
+      onStatusChange: (event) => {
+        const status = event && event.status;
+        if(status === "connecting") setNyxStatus("connecting");
+        else if(status === "connected" && (nyxStatus === "connecting" || nyxStatus === "error")) setNyxStatus("listening");
+      },
+      onError: (message) => {
+        console.warn("Nyx live chat error.", message);
+        showNyxError(formatLiveError(message));
+      }
+    });
+    // If she was hung up (or another agent took over) while connecting, close this session.
+    if(!nyxStarting){ try{ await conv.endSession(); }catch(e){} return; }
+    nyxConversation = conv;
+    nyxStarting = false;
+    stopNyxMic();
+    nyxWake();
+    if(nyxStatus === "connecting") setNyxStatus("listening");
+  }catch(err){
+    nyxStarting = false;
+    nyxConversation = null;
+    stopNyxMic();
+    setNyxFrame(false);
+    showNyxError(formatLiveError(err));
+    console.warn("Nyx live chat could not start.", err);
+  }
+}
+
 function setupSquad(){
   const img = $("roxie-photo");
   const frame = $("roxie-frame");
@@ -3044,6 +3247,16 @@ function setupSquad(){
   const btn = $("roxie-talk-live");
   if(btn) btn.addEventListener("click", () => { startLiveRoxie(); });
   window.addEventListener("pagehide", () => { if(isRoxieLive()) endLiveRoxie(); });
+  const nyxImg = $("nyx-photo");
+  const nyxFrame = $("nyx-frame");
+  if(nyxImg && nyxFrame){
+    const nyxNoPhoto = () => nyxFrame.classList.add("no-photo");
+    nyxImg.addEventListener("error", nyxNoPhoto);
+    if(nyxImg.complete && nyxImg.naturalWidth === 0) nyxNoPhoto();
+  }
+  const nyxBtn = $("nyx-talk-live");
+  if(nyxBtn) nyxBtn.addEventListener("click", () => { startLiveNyx(); });
+  window.addEventListener("pagehide", () => { if(isNyxLive()) endLiveNyx(); });
   const squad = document.querySelector(".squad");
   if(squad && "IntersectionObserver" in window){
     const io = new IntersectionObserver((entries) => {
@@ -3052,7 +3265,8 @@ function setupSquad(){
     io.observe(squad);
   }
 }
-window.__roxie = { start: startLiveRoxie, end: endLiveRoxie, state: () => ({ roxieStatus, roxie: !!roxieConversation, ronnie: !!liveConversation }) };
+window.__roxie = { start: startLiveRoxie, end: endLiveRoxie, state: () => ({ roxieStatus, roxie: !!roxieConversation, ronnie: !!liveConversation, nyx: !!nyxConversation }) };
+window.__nyx = { start: startLiveNyx, end: endLiveNyx, state: () => ({ nyxStatus, nyx: !!nyxConversation, roxie: !!roxieConversation, ronnie: !!liveConversation }) };
 
 
 setupTalk();
