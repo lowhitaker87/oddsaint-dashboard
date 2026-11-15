@@ -1216,8 +1216,9 @@ footer{
 .mc-avatar{
   width:40px;height:40px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
   border:3px solid #8b5cf6;background:linear-gradient(145deg,#efe6ff,#d9c6ff);color:#6d28d9;
-  font-weight:700;font-size:17px;
+  font-weight:700;font-size:17px;overflow:hidden;
 }
+.mc-avatar picture,.mc-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%}
 .mc-id{display:flex;flex-direction:column;min-width:0;line-height:1.2}
 .mc-name{font-weight:700;font-size:14px;display:flex;align-items:center;gap:4px;white-space:nowrap}
 .mc-name svg{width:16px;height:16px;flex:0 0 auto}
@@ -1343,7 +1344,7 @@ footer{
           <figure class="roxie-frame" id="roxie-frame">
             <picture>
               <source type="image/webp" srcset="assets/roxie-card.webp">
-              <img id="roxie-photo" src="assets/roxie-card.jpg" alt="AI-generated portrait of Roxie" width="640" height="800" loading="lazy" decoding="async">
+              <img id="roxie-photo" src="assets/roxie-card.jpg" alt="AI-generated portrait of Roxie, the Freakquency host" width="576" height="720" loading="lazy" decoding="async">
             </picture>
             <div class="roxie-monogram" aria-hidden="true"><b>R</b><small>Roxie photo coming</small></div>
             <div class="roxie-aura" aria-hidden="true"></div>
@@ -1357,7 +1358,7 @@ footer{
               <button type="button" class="btn-gold" id="roxie-talk-live" aria-pressed="false">Talk to Roxie live</button>
               <span id="roxie-live-status" class="ronnie-live-status" hidden aria-live="polite"></span>
             </div>
-            <p class="roxie-credit">Live chats use your ElevenLabs credits per minute. Temporary voice until you make hers. Remember to turn on Instagram's AI label when you post.</p>
+            <p class="roxie-credit">Live chats use your ElevenLabs credits per minute. She speaks in her own ElevenLabs voice. Remember to turn on Instagram's AI label when you post.</p>
           </div>
           <div class="page-pair">
             <section class="page-tile freak-tile" aria-label="THE FREAKQUENCY example">
@@ -1378,7 +1379,7 @@ footer{
               </header>
               <div class="milan-card" role="img" aria-label="Example Meanwhile, Milan quote card: some of y'all don't want honest friends. you want witnesses who clap while you ruin your own life.">
                 <div class="mc-head">
-                  <span class="mc-avatar" aria-hidden="true">M</span>
+                  <span class="mc-avatar" aria-hidden="true"><picture><source type="image/webp" srcset="assets/milan-avatar.webp"><img src="assets/milan-avatar.jpg" alt="" width="128" height="128" loading="lazy" decoding="async"></picture></span>
                   <span class="mc-id">
                     <span class="mc-name">Meanwhile, Milan… <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#8b5cf6" d="M12 1.5l2.6 1.9 3.2-.2 1 3.1 2.6 1.9-1 3.1 1 3.1-2.6 1.9-1 3.1-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3.1-2.6-1.9 1-3.1-1-3.1 2.6-1.9 1-3.1 3.2.2z"/><path fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M7.5 12.2l3 3 6-6.2"/></svg></span>
                     <span class="mc-handle">@meanwhilemilan</span>
