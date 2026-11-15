@@ -1127,6 +1127,113 @@ footer{
 #hear-ronnie{flex:1 1 100%}
 #read-details,#ronnie-mic{flex:1 1 calc(50% - 8px)}
 
+/* ---- Agent squad: Roxie (live) + Nyx (coming soon). Same royal gold language as Ronnie. ---- */
+.squad{margin:6px 0 30px}
+.squad-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+@media (min-width:1024px){.squad-grid{grid-template-columns:minmax(0,1fr) 230px}}
+.squad-card{
+  position:relative;min-width:0;
+  background:linear-gradient(165deg,var(--panel-2),var(--panel));
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:16px;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 1px 0 rgba(255,255,255,.04) inset,var(--shadow);
+}
+.roxie-card{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;border-color:var(--border-strong)}
+@media (min-width:700px){.roxie-card{grid-template-columns:minmax(220px,300px) minmax(0,1fr);padding:20px}}
+.roxie-frame{
+  --vox:0;--aura-1:243,224,166;--aura-2:228,197,107;--aura-3:255,246,214;
+  position:relative;margin:0;
+  aspect-ratio:4/5;width:100%;max-width:360px;justify-self:center;
+  border-radius:46% 46% 18px 18px / 30% 30% 18px 18px;
+  border:1px solid rgba(228,197,107,.7);
+  background:radial-gradient(ellipse at 50% 30%,#4a1426,#1c0a14 70%);
+  overflow:hidden;
+  box-shadow:
+    0 0 0 1px rgba(var(--aura-1), calc(.35 + .55 * var(--vox))),
+    0 0 calc(22px + 60px * var(--vox)) calc(var(--vox) * 10px) rgba(var(--aura-2), calc(.18 + .5 * var(--vox))),
+    0 0 calc(50px + 70px * var(--vox)) rgba(var(--aura-1), calc(.08 + .3 * var(--vox)));
+}
+[data-theme="light"] .roxie-frame{--aura-1:214,168,64;--aura-2:176,128,30;--aura-3:255,236,186}
+.roxie-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 22%;display:block}
+.roxie-frame .roxie-aura{
+  position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .4s ease;
+  box-shadow:
+    inset 0 0 0 calc(1px + 2px * var(--vox)) rgba(var(--aura-3), calc(.35 + .55 * var(--vox))),
+    inset 0 0 calc(18px + 60px * var(--vox)) calc(2px + 8px * var(--vox)) rgba(var(--aura-1), calc(.25 + .45 * var(--vox)));
+}
+.roxie-frame.is-live .roxie-aura{opacity:calc(.15 + .85 * var(--vox))}
+.roxie-monogram{
+  position:absolute;inset:0;display:none;place-items:center;align-content:center;gap:10px;text-align:center;
+  color:#f3e0a6;font-family:var(--font-royal);
+}
+.roxie-frame.no-photo .roxie-monogram{display:grid}
+.roxie-frame.no-photo img{display:none}
+.roxie-monogram b{
+  width:96px;height:96px;border-radius:50%;display:grid;place-items:center;
+  border:1px solid rgba(228,197,107,.8);font-size:44px;font-weight:500;
+  background:radial-gradient(circle at 35% 30%,rgba(243,224,166,.22),rgba(20,8,14,.6));
+  box-shadow:0 0 30px rgba(228,197,107,.25);
+}
+.roxie-monogram small{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#e8d3a0}
+.roxie-body{display:flex;flex-direction:column;gap:12px;min-width:0}
+.roxie-name{font-family:var(--font-display);font-size:clamp(30px,4vw,44px);line-height:1.05}
+.roxie-tagline{color:var(--muted);max-width:40rem}
+.roxie-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.roxie-credit{color:var(--muted);font-size:12px}
+.page-pair{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;grid-column:1/-1;align-items:start}
+@media (min-width:900px){.page-pair{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.page-tile{
+  min-width:0;border-radius:16px;padding:14px;border:1px solid var(--border);
+  display:flex;flex-direction:column;gap:10px;
+}
+.page-tile header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.page-tile h4{margin:0;font-family:var(--font-royal);font-size:14px;letter-spacing:.08em}
+.page-tile .page-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.example-chip{
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:3px 8px;
+  border:1px dashed var(--border-strong);color:var(--gold);white-space:nowrap
+}
+.freak-tile{background:linear-gradient(160deg,rgba(104,28,53,.55),rgba(57,9,23,.7));border-color:rgba(255,67,139,.35)}
+[data-theme="light"] .freak-tile{background:linear-gradient(160deg,rgba(104,28,53,.1),rgba(255,67,139,.06))}
+.freak-post{
+  border-radius:12px;padding:16px;background:#390917;color:#F7E9DE;border:1px solid rgba(255,67,139,.35);
+}
+.freak-post .fp-kicker{font-family:var(--font-royal);font-size:11px;letter-spacing:.2em;color:#FF438B;text-transform:uppercase}
+.freak-post p{font-family:var(--font-display);font-size:18px;line-height:1.3;margin-top:6px}
+.freak-post .fp-sign{font-size:11px;color:#e9b9c9;margin-top:10px;letter-spacing:.06em}
+.milan-tile{background:linear-gradient(160deg,rgba(120,70,180,.22),rgba(40,20,60,.5));border-color:rgba(160,110,230,.4)}
+[data-theme="light"] .milan-tile{background:linear-gradient(160deg,rgba(150,100,220,.1),rgba(255,255,255,.5))}
+.milan-card{
+  min-height:0;width:100%;max-width:380px;align-self:center;aspect-ratio:1/1;
+  background:#fff;color:#111;border-radius:10px;padding:22px 22px;
+  display:flex;flex-direction:column;justify-content:flex-start;gap:22px;
+  font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+  box-shadow:0 10px 26px rgba(0,0,0,.25);
+}
+.mc-head{display:flex;align-items:center;gap:10px}
+.mc-avatar{
+  width:40px;height:40px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;
+  border:3px solid #8b5cf6;background:linear-gradient(145deg,#efe6ff,#d9c6ff);color:#6d28d9;
+  font-weight:700;font-size:17px;
+}
+.mc-id{display:flex;flex-direction:column;min-width:0;line-height:1.2}
+.mc-name{font-weight:700;font-size:14px;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.mc-name svg{width:16px;height:16px;flex:0 0 auto}
+.mc-handle{color:#6b7280;font-size:13px}
+.mc-dots{margin-left:auto;color:#6b7280;font-size:18px;letter-spacing:1px;align-self:flex-start}
+.mc-quote{font-size:clamp(18px,2vw,25px);line-height:1.32;font-weight:500;color:#111;text-transform:lowercase;margin:0}
+.nyx-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;min-height:220px;opacity:.92}
+.nyx-mark{
+  width:84px;height:84px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--font-royal);font-size:36px;color:#c9b8ff;
+  border:1px solid rgba(201,184,255,.55);
+  background:radial-gradient(circle at 35% 30%,rgba(140,110,230,.3),rgba(10,6,20,.8));
+}
+.nyx-card .roxie-name{font-size:30px}
+@media (prefers-reduced-motion:reduce){.roxie-frame{--vox:.35!important}}
+
 </style>
 </head>
 <body>
@@ -1147,7 +1254,7 @@ footer{
 <!-- This notice stays visible while scrolling. Dashboard numbers are examples. Live chat is a real voice agent, not connected to the example agents. -->
 <div class="prototype">
   <svg viewBox="0 0 72 56" aria-hidden="true"><use href="#icon-crown"/></svg>
-  <span><strong>Prototype — example data only.</strong> Ronnie's live chat is a real ElevenLabs AI voice agent, but isn't connected to your agents. Changes to the dashboard are saved only on this device.</span>
+  <span><strong>Prototype — example data only.</strong> Ronnie's and Roxie's live chats are real ElevenLabs AI voice agents, but aren't connected to your agents. Changes to the dashboard are saved only on this device.</span>
 </div>
 
   <section class="cinema-hero" aria-labelledby="page-title">
@@ -1222,6 +1329,75 @@ footer{
 
 <div class="shell">
   <main>
+
+    <section class="squad" aria-labelledby="squad-title">
+      <div class="section-head">
+        <div>
+          <h2 id="squad-title">Your agent squad</h2>
+          <p>Live AI voice agents. Only one live chat runs at a time. Post samples below are labeled examples.</p>
+        </div>
+        <span class="tag">AI voice agents</span>
+      </div>
+      <div class="squad-grid">
+        <article class="squad-card roxie-card" aria-labelledby="roxie-name">
+          <figure class="roxie-frame" id="roxie-frame">
+            <picture>
+              <source type="image/webp" srcset="assets/roxie-card.webp">
+              <img id="roxie-photo" src="assets/roxie-card.jpg" alt="AI-generated portrait of Roxie" width="640" height="800" loading="lazy" decoding="async">
+            </picture>
+            <div class="roxie-monogram" aria-hidden="true"><b>R</b><small>Roxie photo coming</small></div>
+            <div class="roxie-aura" aria-hidden="true"></div>
+            <figcaption class="ai-label">AI-generated</figcaption>
+          </figure>
+          <div class="roxie-body">
+            <p class="eyebrow">Quote pages · Instagram</p>
+            <h3 id="roxie-name" class="roxie-name">Roxie</h3>
+            <p class="roxie-tagline">Your sassy, grown bestie for quote posts. She brainstorms hooks, captions and hashtags in each page's own voice. Drafts only: you post everything yourself.</p>
+            <div class="roxie-actions">
+              <button type="button" class="btn-gold" id="roxie-talk-live" aria-pressed="false">Talk to Roxie live</button>
+              <span id="roxie-live-status" class="ronnie-live-status" hidden aria-live="polite"></span>
+            </div>
+            <p class="roxie-credit">Live chats use your ElevenLabs credits per minute. Temporary voice until you make hers. Remember to turn on Instagram's AI label when you post.</p>
+          </div>
+          <div class="page-pair">
+            <section class="page-tile freak-tile" aria-label="THE FREAKQUENCY example">
+              <header>
+                <div><h4>THE FREAKQUENCY 🍒</h4><div class="page-meta">Hosted by Roxie Monroe (AI) · Instagram</div></div>
+                <span class="example-chip">Example draft</span>
+              </header>
+              <div class="freak-post">
+                <div class="fp-kicker">Sip or Spill</div>
+                <p>What's the most unhinged thing you've done just to look "unbothered"? Be honest. We're all friends here.</p>
+                <div class="fp-sign">THE FREAKQUENCY · Roxie is an AI character</div>
+              </div>
+            </section>
+            <section class="page-tile milan-tile" aria-label="Meanwhile, Milan example">
+              <header>
+                <div><h4>MEANWHILE, MILAN…</h4><div class="page-meta">@meanwhilemilan · Milan Carter (AI) · Instagram</div></div>
+                <span class="example-chip">Example quote</span>
+              </header>
+              <div class="milan-card" role="img" aria-label="Example Meanwhile, Milan quote card: some of y'all don't want honest friends. you want witnesses who clap while you ruin your own life.">
+                <div class="mc-head">
+                  <span class="mc-avatar" aria-hidden="true">M</span>
+                  <span class="mc-id">
+                    <span class="mc-name">Meanwhile, Milan… <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#8b5cf6" d="M12 1.5l2.6 1.9 3.2-.2 1 3.1 2.6 1.9-1 3.1 1 3.1-2.6 1.9-1 3.1-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3.1-2.6-1.9 1-3.1-1-3.1 2.6-1.9 1-3.1 3.2.2z"/><path fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M7.5 12.2l3 3 6-6.2"/></svg></span>
+                    <span class="mc-handle">@meanwhilemilan</span>
+                  </span>
+                  <span class="mc-dots" aria-hidden="true">•••</span>
+                </div>
+                <p class="mc-quote">some of y'all don't want honest friends. you want witnesses who clap while you ruin your own life.</p>
+              </div>
+            </section>
+          </div>
+        </article>
+        <article class="squad-card nyx-card" aria-labelledby="nyx-name">
+          <span class="nyx-mark" aria-hidden="true">N</span>
+          <p class="eyebrow">After Dark</p>
+          <h3 id="nyx-name" class="roxie-name">Nyx</h3>
+          <span class="tag">Coming soon</span>
+        </article>
+      </div>
+    </section>
 
     <section class="stats" aria-label="Example workspace summary" id="stats"></section>
 
@@ -2571,6 +2747,8 @@ async function startLiveRonnie(){
     await endLiveRonnie();
     return;
   }
+  // One live chat at a time: hang up Roxie first.
+  if(typeof isRoxieLive === "function" && isRoxieLive()) await endLiveRoxie();
   const Conversation = window.ElevenLabsClient && window.ElevenLabsClient.Conversation;
   if(!Conversation || typeof Conversation.startSession !== "function"){
     showLiveError("Couldn't connect: tap to retry");
@@ -2593,7 +2771,7 @@ async function startLiveRonnie(){
     return;
   }
   try{
-    liveConversation = await Conversation.startSession({
+    const ronnieConv = await Conversation.startSession({
       agentId: RONNIE_AGENT_ID,
       connectionType: "websocket",
       onConnect: () => {
@@ -2624,6 +2802,9 @@ async function startLiveRonnie(){
         showLiveError(formatLiveError(message));
       }
     });
+    // If she was hung up (or Roxie took over) while connecting, close this session.
+    if(!liveStarting){ try{ await ronnieConv.endSession(); }catch(e){} return; }
+    liveConversation = ronnieConv;
     liveStarting = false;
     stopLiveMicPreview();
     RonnieVoice.setLive(liveConversation);
@@ -2690,7 +2871,176 @@ function setupTalk(){
   setupHeroMotion();
 }
 
+/* ---- Talk to Roxie live (ElevenLabs agent, websocket like Ronnie). Only one live chat at a time. ---- */
+const ROXIE_AGENT_ID = "agent_2401m7gkfwptf8zr80nddd73cyag";
+const ROXIE_STATUS_LABELS = { connecting: "Connecting", listening: "Listening", speaking: "Roxie is talking" };
+let roxieConversation = null;
+let roxieStarting = false;
+let roxieStatus = "";
+let roxieMicStream = null;
+let roxieRaf = 0, roxieAura = 0, roxieLast = 0;
+
+function roxieTick(now){
+  const frame = $("roxie-frame");
+  const dt = roxieLast ? Math.min(100, now - roxieLast) : 16.7;
+  roxieLast = now;
+  let raw = 0;
+  if(roxieConversation){
+    try{ const v = roxieConversation.getOutputVolume(); if(typeof v === "number" && isFinite(v)) raw = v; }catch(e){}
+  }
+  const g = (raw - 0.15) / 0.3;
+  const target = g <= 0 ? 0 : g >= 1 ? 1 : Math.pow(g, 1.2);
+  const k = target > roxieAura ? 0.22 : 0.07;
+  roxieAura += (target - roxieAura) * (1 - Math.pow(1 - k, dt / 16.7));
+  if(target === 0 && roxieAura < 0.01) roxieAura = 0;
+  if(frame) frame.style.setProperty("--vox", String(Math.round(roxieAura * 1000) / 1000));
+  window.__roxieVox = { raw, aura: roxieAura, max: Math.max((window.__roxieVox || {}).max || 0, roxieAura) };
+  if(roxieConversation || roxieStarting || roxieAura > 0){ roxieRaf = requestAnimationFrame(roxieTick); }
+  else { roxieRaf = 0; roxieLast = 0; }
+}
+function roxieWake(){ if(!roxieRaf) roxieRaf = requestAnimationFrame(roxieTick); }
+
+function setRoxieFrame(on){
+  const frame = $("roxie-frame");
+  if(frame) frame.classList.toggle("is-live", !!on);
+  roxieWake();
+}
+
+function setRoxieStatus(status){
+  roxieStatus = status || "";
+  const pill = $("roxie-live-status");
+  const button = $("roxie-talk-live");
+  if(pill){
+    pill.classList.remove("is-error");
+    pill.hidden = !status;
+    pill.textContent = status ? (ROXIE_STATUS_LABELS[status] || status) : "";
+  }
+  if(button){
+    button.textContent = status ? "End chat" : "Talk to Roxie live";
+    button.setAttribute("aria-pressed", status ? "true" : "false");
+  }
+}
+
+function showRoxieError(message){
+  roxieStatus = "error";
+  const pill = $("roxie-live-status");
+  const button = $("roxie-talk-live");
+  if(pill){ pill.hidden = false; pill.textContent = message; pill.classList.add("is-error"); }
+  if(button){ button.textContent = "Talk to Roxie live"; button.setAttribute("aria-pressed", "false"); }
+}
+
+function stopRoxieMic(){
+  if(!roxieMicStream) return;
+  try{ roxieMicStream.getTracks().forEach((t) => t.stop()); }catch(e){}
+  roxieMicStream = null;
+}
+
+function isRoxieLive(){ return !!(roxieConversation || roxieStarting); }
+function isRonnieLive(){ return !!(liveConversation || liveStarting); }
+
+async function endLiveRoxie(){
+  const conversation = roxieConversation;
+  roxieConversation = null;
+  roxieStarting = false;
+  stopRoxieMic();
+  try{
+    if(conversation && typeof conversation.endSession === "function") await conversation.endSession();
+  }catch(err){ console.warn("Roxie live chat could not end.", err); }
+  setRoxieFrame(false);
+  setRoxieStatus("");
+}
+
+async function startLiveRoxie(){
+  if(isRoxieLive()){ await endLiveRoxie(); return; }
+  // One live chat at a time: hang up Ronnie (and stop any quick line) first.
+  if(isRonnieLive()) await endLiveRonnie();
+  try{ stopSpeaking(); }catch(e){}
+  const Conversation = window.ElevenLabsClient && window.ElevenLabsClient.Conversation;
+  if(!Conversation || typeof Conversation.startSession !== "function"){
+    showRoxieError("Couldn't connect: tap to retry");
+    console.warn("Roxie live chat could not start. The ElevenLabs client did not load.");
+    return;
+  }
+  roxieStarting = true;
+  setRoxieFrame(true);
+  setRoxieStatus("connecting");
+  try{
+    if(!navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== "function"){
+      const e = new Error("Microphone access is not available in this browser."); e.name = "NotFoundError"; throw e;
+    }
+    roxieMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  }catch(err){
+    roxieStarting = false;
+    setRoxieFrame(false);
+    showRoxieError(formatLiveError(err));
+    console.warn("Roxie live chat could not start.", err);
+    return;
+  }
+  try{
+    const conv = await Conversation.startSession({
+      agentId: ROXIE_AGENT_ID,
+      connectionType: "websocket",
+      onConnect: () => {
+        setRoxieFrame(true);
+        if(roxieStatus === "connecting" || roxieStatus === "error") setRoxieStatus("listening");
+      },
+      onDisconnect: () => {
+        const keepError = roxieStatus === "error";
+        roxieConversation = null;
+        roxieStarting = false;
+        stopRoxieMic();
+        setRoxieFrame(false);
+        if(!keepError) setRoxieStatus("");
+      },
+      onModeChange: (event) => {
+        const mode = event && event.mode;
+        if(mode === "speaking") setRoxieStatus("speaking");
+        else if(mode === "listening") setRoxieStatus("listening");
+      },
+      onStatusChange: (event) => {
+        const status = event && event.status;
+        if(status === "connecting") setRoxieStatus("connecting");
+        else if(status === "connected" && (roxieStatus === "connecting" || roxieStatus === "error")) setRoxieStatus("listening");
+      },
+      onError: (message) => {
+        console.warn("Roxie live chat error.", message);
+        showRoxieError(formatLiveError(message));
+      }
+    });
+    // If she was hung up (or Ronnie took over) while connecting, close this session.
+    if(!roxieStarting){ try{ await conv.endSession(); }catch(e){} return; }
+    roxieConversation = conv;
+    roxieStarting = false;
+    stopRoxieMic();
+    roxieWake();
+    if(roxieStatus === "connecting") setRoxieStatus("listening");
+  }catch(err){
+    roxieStarting = false;
+    roxieConversation = null;
+    stopRoxieMic();
+    setRoxieFrame(false);
+    showRoxieError(formatLiveError(err));
+    console.warn("Roxie live chat could not start.", err);
+  }
+}
+
+function setupSquad(){
+  const img = $("roxie-photo");
+  const frame = $("roxie-frame");
+  if(img && frame){
+    const noPhoto = () => frame.classList.add("no-photo");
+    img.addEventListener("error", noPhoto);
+    if(img.complete && img.naturalWidth === 0) noPhoto();
+  }
+  const btn = $("roxie-talk-live");
+  if(btn) btn.addEventListener("click", () => { startLiveRoxie(); });
+  window.addEventListener("pagehide", () => { if(isRoxieLive()) endLiveRoxie(); });
+}
+window.__roxie = { start: startLiveRoxie, end: endLiveRoxie, state: () => ({ roxieStatus, roxie: !!roxieConversation, ronnie: !!liveConversation }) };
+
+
 setupTalk();
+setupSquad();
 </script>
 </body>
 </html>
