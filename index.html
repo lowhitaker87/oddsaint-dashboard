@@ -5,8 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#0a0612">
-<meta name="description" content="Oddsaint Agent Farm prototype — example data only. No agents are connected.">
-<title>Oddsaint Agent Farm — Prototype</title>
+<meta name="description" content="Oddsaint dashboard: real activity from Lauren's AI agents, drafts waiting on her, and finished videos.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Oddsaint">
+<meta name="application-name" content="Oddsaint">
+<title>Oddsaint Agent Farm</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 56'%3E%3Crect width='72' height='56' rx='8' fill='%230a0612'/%3E%3Cpath fill='%23e4c56b' d='M8.5 23.5 16.8 8.8l11 16.2L36 5.2l8.2 19.8 11-16.2 8.3 14.7-5.2 18.2H13.7Z'/%3E%3Cpath fill='%23e4c56b' d='M11 43h50v5.5a3 3 0 0 1-3 3H14a3 3 0 0 1-3-3Z'/%3E%3C/svg%3E">
 <style>
 @font-face{
@@ -30,7 +38,7 @@
   font-style:italic;
   font-display:swap;
 }
-/* Oddsaint royal prototype — fonts and assets are local. The only remote script is the official ElevenLabs conversational widget. */
+/* Oddsaint royal dashboard — fonts and assets are local. The only remote script is the official ElevenLabs conversational widget. */
 :root{
   color-scheme:dark;
   --bg:#0a0612;
@@ -188,8 +196,8 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   color:#2a1c12;
 }
 
-/* Prototype banner stays visible while scrolling */
-.prototype{
+/* Status banner stays visible while scrolling */
+.status-banner{
   position:sticky;top:0;z-index:40;
   display:flex;justify-content:center;align-items:center;gap:10px;
   padding:10px 16px;
@@ -201,8 +209,8 @@ h3{font-size:16px;font-family:var(--font-royal);letter-spacing:.04em}
   color:var(--muted);
   line-height:1.45;
 }
-.prototype strong{color:var(--gold)}
-.prototype svg{flex:0 0 auto;width:14px;height:14px;color:var(--gold)}
+.status-banner strong{color:var(--gold)}
+.status-banner svg{flex:0 0 auto;width:14px;height:14px;color:var(--gold)}
 
 .shell{width:min(1180px,100%);margin:0 auto;padding:0 18px 88px}
 @media (min-width:820px){.shell{padding:0 28px 96px}}
@@ -1190,14 +1198,14 @@ footer{
 .page-tile header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
 .page-tile h4{margin:0;font-family:var(--font-royal);font-size:14px;letter-spacing:.08em}
 .page-tile .page-meta{font-size:12px;color:var(--muted);margin-top:2px}
-.example-chip{
+.draft-chip{
   font-size:10px;letter-spacing:.1em;text-transform:uppercase;border-radius:999px;padding:3px 8px;
   border:1px dashed var(--border-strong);color:var(--gold);white-space:nowrap
 }
 .freak-tile{background:linear-gradient(160deg,rgba(104,28,53,.55),rgba(57,9,23,.7));border-color:rgba(255,67,139,.35)}
 [data-theme="light"] .freak-tile{background:linear-gradient(160deg,rgba(104,28,53,.1),rgba(255,67,139,.06))}
 @font-face{font-family:"FQ Brush";src:url("assets/fonts/kaushan-script-sub.woff") format("woff");font-display:swap}
-/* THE FREAKQUENCY example card: 4:5 IG post rebuilt in pure CSS (satin = gradients). */
+/* THE FREAKQUENCY card: 4:5 IG post rebuilt in pure CSS (satin = gradients). */
 .fq-card{
   --fq-gold:linear-gradient(180deg,#FFF3CF 0%,#F6E3B4 30%,#D9B26F 58%,#9C6B30 82%,#E9C98A 100%);
   --fq-pink:#FF3D8B;
@@ -1331,6 +1339,34 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
 .ronnie-fab{transition:opacity .25s ease,transform .25s ease}
 @media (prefers-reduced-motion:reduce){.page-avatar{box-shadow:none}}
 
+/* Real-data sections */
+.updated-stamp{font-size:12px;color:var(--gold);letter-spacing:.04em}
+.live-grid,.video-grid,.nc-grid{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:700px){.live-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.nc-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.video-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:900px){.video-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.live-card,.nc-card,.video-card{min-width:0;border:1px solid var(--border);border-radius:18px;padding:14px;background:linear-gradient(145deg,var(--panel),var(--wash))}
+.live-card h3{font-family:var(--font-display);font-size:22px;margin:0}
+.live-card .live-role{color:var(--muted);font-size:12px;margin-top:2px}
+.live-nums{display:flex;gap:18px;margin-top:12px;flex-wrap:wrap}
+.live-nums div{display:flex;flex-direction:column}
+.live-nums b{font-family:var(--font-display);font-size:30px;line-height:1;color:var(--gold);font-weight:500}
+.live-nums small{font-size:11px;color:var(--muted);margin-top:4px}
+.live-last{font-size:12px;color:var(--muted);margin-top:10px}
+.live-last b{color:var(--text);font-weight:600}
+.video-card{padding:10px;display:flex;flex-direction:column;gap:8px}
+.video-card video{width:100%;aspect-ratio:9/16;object-fit:cover;border-radius:12px;background:#000;display:block}
+.video-card h3{font-family:var(--font-display);font-size:16px;margin:0}
+.video-card p{font-size:11px;color:var(--muted);margin:0}
+.nc-card h3{font-size:14px;margin:0}
+.nc-card .nc-state{display:inline-block;margin-top:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;border:1px dashed var(--border-strong);border-radius:999px;padding:3px 9px;color:var(--muted)}
+.nc-card p{font-size:12px;color:var(--muted);margin-top:8px}
+.real-section{margin:0 0 30px}
+.draft-note{font-size:12px;color:var(--muted);margin:0}
+.draft-note b{color:var(--gold);font-weight:600}
+.fq-wyr .fq-beat{font-size:4.3cqw;line-height:1.2;margin-bottom:1.8cqw}
+.fq-wyr .fq-or{font-family:var(--font-royal);font-size:3.4cqw;letter-spacing:.2em;color:#FF4F94;margin:0 0 1.8cqw}
+
 </style>
 </head>
 <body>
@@ -1348,10 +1384,10 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
 </svg>
 
 <div class="page-top">
-<!-- This notice stays visible while scrolling. Dashboard numbers are examples. Live chat is a real voice agent, not connected to the example agents. -->
-<div class="prototype">
+<!-- This notice stays visible while scrolling. Agent numbers are a snapshot copied from ElevenLabs; no keys live in this file. -->
+<div class="status-banner">
   <svg viewBox="0 0 72 56" aria-hidden="true"><use href="#icon-crown"/></svg>
-  <span><strong>Prototype — example data only.</strong> Ronnie's and Roxie's live chats are real ElevenLabs AI voice agents, but aren't connected to your agents. Changes to the dashboard are saved only on this device.</span>
+  <span><strong>Real data · Updated Nov 20, 2026, 7:47 PM CT.</strong> Agent numbers and drafts are copied from your ElevenLabs agents. Social stats aren't connected yet. Nothing here posts for you.</span>
 </div>
 
   <section class="cinema-hero" aria-labelledby="page-title">
@@ -1412,13 +1448,13 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
         <p class="eyebrow">Your command palace</p>
         <h1 id="page-title" class="cinema-name">Ronnie</h1>
         <p class="cinema-tagline">Welcome home, Queen. Your royal bestie is at the door.</p>
-        <p class="cinema-lead">A little vision. A lot of possibility. Talk with her live, or play a quick line while you review example work below.</p>
+        <p class="cinema-lead">A little vision. A lot of possibility. Talk with her live, or play a quick line while you review your agents' real work below.</p>
         <div class="cinema-actions">
           <button type="button" class="btn-gold cinema-cta" id="talk-live" aria-pressed="false">Talk to Ronnie live</button>
           <span id="ronnie-live-status" class="ronnie-live-status" hidden aria-live="polite"></span>
           <button type="button" class="btn-ghost" id="quick-lines" aria-controls="ronnie-panel" aria-expanded="false">Quick lines</button>
         </div>
-        <p class="cinema-credit">Live conversations use your ElevenLabs credits per minute. She isn't connected to the example agents on this dashboard.</p>
+        <p class="cinema-credit">Live conversations use your ElevenLabs credits per minute. Ronnie is an AI character.</p>
       </div>
     </div>
   </section>
@@ -1431,7 +1467,7 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
       <div class="section-head">
         <div>
           <h2 id="squad-title">Your agent squad</h2>
-          <p>Live AI voice agents. Only one live chat runs at a time. Post samples below are labeled examples.</p>
+          <p>Live AI voice agents. Only one live chat runs at a time. The posts below are real drafts your agents wrote. Lauren posts.</p>
         </div>
         <span class="tag">AI voice agents</span>
       </div>
@@ -1457,36 +1493,35 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
             <p class="roxie-credit">Live chats use your ElevenLabs credits per minute. She speaks in her own ElevenLabs voice. Remember to turn on Instagram's AI label when you post.</p>
           </div>
           <div class="page-pair">
-            <section class="page-tile freak-tile" aria-label="THE FREAKQUENCY example">
+            <section class="page-tile freak-tile" aria-label="THE FREAKQUENCY draft">
               <header>
-                <div class="page-id"><span class="page-avatar"><picture><source type="image/webp" srcset="assets/roxie-avatar.webp"><img src="assets/roxie-avatar.jpg" alt="AI-generated Roxie" width="128" height="128" loading="lazy" decoding="async"></picture></span><div><h4>THE FREAKQUENCY 🍒</h4><div class="page-meta">Hosted by Roxie Monroe (AI) · Instagram</div></div></div>
-                <span class="example-chip">Example post</span>
+                <div class="page-id"><span class="page-avatar"><picture><source type="image/webp" srcset="assets/roxie-avatar.webp"><img src="assets/roxie-avatar.jpg" alt="AI-generated Roxie" width="128" height="128" loading="lazy" decoding="async"></picture></span><div><h4>THE FREAKQUENCY 🍒</h4><div class="page-meta">@freakquencyafterdark · Roxie Monroe (AI character) · Instagram</div></div></div>
+                <span class="draft-chip">Draft — Lauren posts</span>
               </header>
-              <div class="fq-card" role="img" aria-label="Example Confession Line card. Confession: I told my situationship I needed space. So he gave me a key to his place. Now I'm over there needing space four nights a week. Roxie's response: Baby, that's not space. That's a lease with benefits.">
+              <div class="fq-card fq-wyr" role="img" aria-label="Would You Rather card. A: Spend a long weekend trapped in a cabin with your toxic ex who still knows exactly how to make you scream. Or B: Have your current partner find the hidden folder of screenshots you never deleted of your ex. You can't pick both.">
                 <span class="fq-deco fq-cherries"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4c-2 8-7 14-11 20M20 4c2 9 6 14 11 19" fill="none" stroke="#7a9a3a" stroke-width="2" stroke-linecap="round"/><path d="M20 4c4-3 9-2 11 1-4 1-8 1-11-1z" fill="#6f8f2f"/><circle cx="10" cy="29" r="8" fill="url(#fqc)"/><circle cx="30" cy="28" r="8" fill="url(#fqc)"/><defs><radialGradient id="fqc" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff9fb8"/><stop offset=".25" stop-color="#e0103f"/><stop offset=".8" stop-color="#6a0016"/><stop offset="1" stop-color="#3a000c"/></radialGradient></defs></svg></span>
                 <svg class="fq-deco fq-coupe" viewBox="0 0 40 60" aria-hidden="true"><path d="M3 6h34c-1 10-8 16-17 16S4 16 3 6z" fill="rgba(255,150,170,.35)" stroke="#F2C9A8" stroke-width="1.2"/><path d="M5 9h30c-2 7-8 11-15 11S7 16 5 9z" fill="#c2304f" opacity=".75"/><path d="M20 22v28M10 54h20" stroke="#F2C9A8" stroke-width="1.6" stroke-linecap="round"/></svg>
                 <svg class="fq-deco fq-lips" viewBox="0 0 60 30" aria-hidden="true"><path d="M2 14C10 4 20 2 30 9 40 2 50 4 58 14 50 16 40 15 30 14 20 15 10 16 2 14z" fill="#d0153f"/><path d="M2 15c10 2 20 2 28 1 8 1 18 1 28-1C50 26 40 29 30 28 20 29 10 26 2 15z" fill="#a80d30"/></svg>
                 <span class="fq-deco fq-pearls" aria-hidden="true"></span>
-                <div class="fq-title" aria-hidden="true"><span class="fq-gold">Confession</span><span class="fq-neon">Line</span></div>
+                <div class="fq-title" aria-hidden="true"><span class="fq-gold">Would You</span><span class="fq-neon">Rather?</span></div>
                 <div class="fq-panel" aria-hidden="true">
                   <span class="fq-star s1"></span><span class="fq-star s2"></span><span class="fq-star s3"></span><span class="fq-star s4"></span>
-                  <p class="fq-beat">I told my situationship I needed <em>space</em>.</p>
-                  <p class="fq-beat">So he gave me a key to his place.</p>
-                  <p class="fq-beat">Now I'm over there <em>"needing space"</em> four nights a week.</p>
+                  <p class="fq-beat"><em>A.</em> Spend a long weekend trapped in a cabin with your toxic ex who still knows exactly how to make you scream.</p>
+                  <p class="fq-or">OR</p>
+                  <p class="fq-beat"><em>B.</em> Have your current partner find the hidden folder of screenshots you never deleted of your ex.</p>
                   <div class="fq-divider">&#9825;</div>
-                  <span class="fq-pill">Roxie's Response:</span>
-                  <p class="fq-response">Baby, that's not space. That's a <b>lease with benefits</b>. 😭💀</p>
+                  <span class="fq-pill">You can't pick both.</span>
                 </div>
                 <div class="fq-logo" aria-hidden="true"><span class="fq-the">The</span><span class="fq-word">FREAKQUENCY</span><span class="fq-rule"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4c-2 8-7 14-11 20M20 4c2 9 6 14 11 19" fill="none" stroke="#7a9a3a" stroke-width="2" stroke-linecap="round"/><path d="M20 4c4-3 9-2 11 1-4 1-8 1-11-1z" fill="#6f8f2f"/><circle cx="10" cy="29" r="8" fill="url(#fqc2)"/><circle cx="30" cy="28" r="8" fill="url(#fqc2)"/><defs><radialGradient id="fqc2" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff9fb8"/><stop offset=".25" stop-color="#e0103f"/><stop offset=".8" stop-color="#6a0016"/><stop offset="1" stop-color="#3a000c"/></radialGradient></defs></svg></span></div>
               </div>
-              <p class="fq-caption">Example Confession Line draft (original, fictional) · Roxie is an AI character</p>
+              <p class="fq-caption">Real Roxie draft · Would You Rather? · Nov 15, 2026, 5:18 PM CT · Roxie is an AI character · Turn on Instagram's AI label</p>
             </section>
-            <section class="page-tile milan-tile" aria-label="Meanwhile, Milan example">
+            <section class="page-tile milan-tile" aria-label="Meanwhile, Milan draft">
               <header>
-                <div><h4>MEANWHILE, MILAN…</h4><div class="page-meta">@meanwhilemilan · Milan Carter (AI) · Instagram</div></div>
-                <span class="example-chip">Example quote</span>
+                <div><h4>MEANWHILE, MILAN…</h4><div class="page-meta">@meanwhilemilan · Milan Carter (AI character) · Instagram</div></div>
+                <span class="draft-chip">Draft — Lauren posts</span>
               </header>
-              <div class="milan-card" role="img" aria-label="Example Meanwhile, Milan quote card: some of y'all don't want honest friends. you want witnesses who clap while you ruin your own life.">
+              <div class="milan-card" role="img" aria-label="Meanwhile, Milan quote card: i'm not ignoring you, i'm just busy doing nothing">
                 <div class="mc-head">
                   <span class="mc-avatar" aria-hidden="true"><picture><source type="image/webp" srcset="assets/milan-avatar.webp"><img src="assets/milan-avatar.jpg" alt="" width="128" height="128" loading="lazy" decoding="async"></picture></span>
                   <span class="mc-id">
@@ -1495,8 +1530,9 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
                   </span>
                   <span class="mc-dots" aria-hidden="true">•••</span>
                 </div>
-                <p class="mc-quote">some of y'all don't want honest friends. you want witnesses who clap while you ruin your own life.</p>
+                <p class="mc-quote">i'm not ignoring you, i'm just busy doing nothing</p>
               </div>
+              <p class="fq-caption">Real Roxie draft · slide 2 follow card: "you'll never see me again if you don't follow 💜" · Nov 20, 2026, 6:10 PM CT · Milan is an AI character · Full caption in Drafts below</p>
             </section>
           </div>
         </article>
@@ -1516,8 +1552,8 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
             <p class="roxie-tagline">The mysterious it girl of Nocturne City: dry wit, midnight coffee, and late-night ideas, cooking up drafts you post yourself.</p>
             <ul class="lane-list" aria-label="Nyx's platform lanes">
               <li class="lane is-on"><b>Instagram</b> @afterhourswithnyx <i>Active</i></li>
-              <li class="lane is-soon"><b>X</b> <i>Coming soon</i></li>
-              <li class="lane is-soon"><b>Fanvue</b> <i>Coming soon</i></li>
+              <li class="lane is-soon"><b>X</b> <i>Not set up yet</i></li>
+              <li class="lane is-soon"><b>Fanvue</b> <i>Not set up yet</i></li>
             </ul>
             <div class="roxie-actions">
               <button type="button" class="btn-gold" id="nyx-talk-live" aria-pressed="false">Talk to Nyx live</button>
@@ -1526,16 +1562,16 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
             <p class="roxie-credit">Live chats use your ElevenLabs credits per minute. She speaks in her own ElevenLabs voice. Instagram drafts stay mainstream; after-hours ideas wait for X and Fanvue. Remember to turn on the AI label when you post.</p>
           </div>
           <div class="nyx-pair">
-            <section class="page-tile nyx-tile" aria-label="Nyx Instagram example">
+            <section class="page-tile nyx-tile" aria-label="Nyx Instagram draft">
               <header>
-                <div class="page-id"><span class="page-avatar"><picture><source type="image/webp" srcset="assets/nyx-avatar.webp"><img src="assets/nyx-avatar.jpg" alt="AI-generated Nyx" width="128" height="128" loading="lazy" decoding="async"></picture></span><div><h4>AFTER HOURS WITH NYX</h4><div class="page-meta">@afterhourswithnyx · Nyx Monroe (AI) · Instagram</div></div></div>
-                <span class="example-chip">Example draft</span>
+                <div class="page-id"><span class="page-avatar"><picture><source type="image/webp" srcset="assets/nyx-avatar.webp"><img src="assets/nyx-avatar.jpg" alt="AI-generated Nyx" width="128" height="128" loading="lazy" decoding="async"></picture></span><div><h4>AFTER HOURS WITH NYX</h4><div class="page-meta">@afterhourswithnyx · Nyx Monroe (AI character) · Instagram</div></div></div>
+                <span class="draft-chip">Draft — Lauren posts</span>
               </header>
               <div class="nyx-post">
                 <div class="np-kicker">Too Expensive for a Tuesday</div>
-                <p>Full glam. New boots. Nowhere to be. I made it as far as the elevator, looked at it, and decided it hadn't earned me. Staying in.</p>
-                <div class="np-tags">#TooExpensiveForATuesday #NocturneCity #AfterDarkWithNyx</div>
-                <div class="np-sign">Nyx is an AI character</div>
+                <p>Dressing up just to walk to the kitchen for midnight espresso. Because Tuesday deserved a little drama.</p>
+                <div class="np-tags">#TooExpensiveForATuesday #NocturneCity #AfterHours #EclipseHouse #FictionalAI</div>
+                <div class="np-sign">Real Nyx draft · Nov 15, 2026, 5:11 PM CT · Nyx is an AI character · Turn on Instagram's AI label</div>
               </div>
             </section>
           </div>
@@ -1543,26 +1579,92 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
       </div>
     </section>
 
-    <section class="stats" aria-label="Example workspace summary" id="stats"></section>
+    <section class="stats" aria-label="Workspace summary" id="stats"></section>
+
+    <section class="real-section" aria-labelledby="activity-title">
+      <div class="section-head">
+        <div>
+          <h2 id="activity-title">Real agent activity</h2>
+          <p>Conversation counts and last activity from ElevenLabs. <span class="updated-stamp">Updated Nov 20, 2026, 7:47 PM CT</span></p>
+        </div>
+        <span class="tag">From ElevenLabs</span>
+      </div>
+      <div class="live-grid" id="live-grid"></div>
+    </section>
+
+    <section class="real-section" aria-labelledby="videos-title">
+      <div class="section-head">
+        <div>
+          <h2 id="videos-title">Finished videos</h2>
+          <p>Ready for you to post. Every creator here is AI-generated, so turn on the AI label when you post.</p>
+        </div>
+        <span class="tag">AI-generated</span>
+      </div>
+      <div class="video-grid">
+        <article class="video-card">
+          <video controls playsinline preload="none" poster="assets/videos/coi-spicy-society-poster.jpg" width="720" height="1280" aria-label="Coi Spicy Society promo, AI-generated video">
+            <source src="assets/videos/coi-spicy-society.mp4" type="video/mp4">
+          </video>
+          <h3>Coi · Spicy Society</h3>
+          <p>AI character · 15s · Finished — Lauren posts</p>
+        </article>
+        <article class="video-card">
+          <video controls playsinline preload="none" poster="assets/videos/coi-restaurant-poster.jpg" width="720" height="1270" aria-label="Coi Spicy Society at the restaurant, AI-generated video">
+            <source src="assets/videos/coi-restaurant.mp4" type="video/mp4">
+          </video>
+          <h3>Coi · Spicy Society, restaurant</h3>
+          <p>AI character · 15s · Finished — Lauren posts</p>
+        </article>
+        <article class="video-card">
+          <video controls playsinline preload="none" poster="assets/videos/talia-frosted-fig-poster.jpg" width="720" height="1280" aria-label="Talia Frosted Fig, AI-generated video">
+            <source src="assets/videos/talia-frosted-fig.mp4" type="video/mp4">
+          </video>
+          <h3>Talia · Frosted Fig</h3>
+          <p>AI character · 15s · Finished — Lauren posts</p>
+        </article>
+        <article class="video-card">
+          <video controls playsinline preload="none" poster="assets/videos/coi-atlanta-walk-poster.jpg" width="720" height="1280" aria-label="Coi Atlanta night walk, AI-generated video">
+            <source src="assets/videos/coi-atlanta-walk.mp4" type="video/mp4">
+          </video>
+          <h3>Coi · Atlanta night walk</h3>
+          <p>AI character · 15s · Finished — Lauren posts</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="real-section" aria-labelledby="social-title">
+      <div class="section-head">
+        <div>
+          <h2 id="social-title">Social stats</h2>
+          <p>No social accounts are connected, so there are no numbers to show here yet.</p>
+        </div>
+        <span class="tag">Not connected yet</span>
+      </div>
+      <div class="nc-grid">
+        <article class="nc-card"><h3>Followers</h3><span class="nc-state">Not connected yet</span><p>Instagram, X and Fanvue follower counts.</p></article>
+        <article class="nc-card"><h3>Post stats &amp; engagement</h3><span class="nc-state">Not connected yet</span><p>Views, likes, comments and saves.</p></article>
+        <article class="nc-card"><h3>Earnings</h3><span class="nc-state">Not connected yet</span><p>Nothing is tracked here until you add it.</p></article>
+      </div>
+    </section>
 
     <div class="toolbar">
       <label class="search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20 16.5 16.5"/></svg>
-        <span class="sr-only">Search example tasks</span>
-        <input id="task-search" type="search" placeholder="Search example tasks…" autocomplete="off">
+        <span class="sr-only">Search tasks and drafts</span>
+        <input id="task-search" type="search" placeholder="Search tasks and drafts…" autocomplete="off">
       </label>
-      <button type="button" id="reset-data" class="btn-ghost">Reset example data</button>
+      <button type="button" id="reset-data" class="btn-ghost">Reset my tasks</button>
     </div>
 
     <section aria-labelledby="agents-title">
       <div class="section-head">
         <div>
           <h2 id="agents-title">Meet your agents</h2>
-          <p>Example roles. Open a card for details, or add and check off tasks right here.</p>
+          <p>Your real ElevenLabs agents. Add and check off tasks right here. Tasks are saved on this device only.</p>
         </div>
-        <span class="tag">Example roster</span>
+        <span class="tag">AI characters</span>
       </div>
-      <div class="filters" id="filters" role="group" aria-label="Filter example work by agent"></div>
+      <div class="filters" id="filters" role="group" aria-label="Filter work by agent"></div>
       <div class="agents" id="agents"></div>
     </section>
 
@@ -1570,10 +1672,10 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
       <section class="review-panel" aria-labelledby="completed-title">
         <div class="panel-heading">
           <div class="panel-title">
-            <h2 id="completed-title">Completed work</h2>
+            <h2 id="completed-title">Real drafts</h2>
             <span class="count" id="completed-count"></span>
           </div>
-          <p>Example drafts, ready for a closer look.</p>
+          <p>Copied word for word from your agents' ElevenLabs chats. Drafts only — Lauren posts.</p>
         </div>
         <div id="completed"></div>
       </section>
@@ -1587,15 +1689,15 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
         </div>
         <div id="approvals"></div>
         <div id="decided"></div>
-        <div class="footnote">Prototype buttons — nothing is sent or posted.</div>
+        <div class="footnote">These buttons only save a note on this device. Nothing is sent or posted.</div>
       </section>
     </div>
 
     <aside class="setup">
       <svg viewBox="0 0 72 56" aria-hidden="true"><use href="#icon-crown"/></svg>
       <div>
-        <h3>A beautiful starting point. Not a connected system.</h3>
-        <p>This prototype works offline. To connect real work later, you’ll need an agent execution service, a secure place to store tasks and approvals, and a sign-in. Free static hosting can share the interface; it does not make agents run tasks. Keep private keys out of this file. Publishing and spending stay manual.</p>
+        <h3>Where these numbers come from</h3>
+        <p>Agent chat counts, last activity and drafts are copied from your ElevenLabs account and baked into this page (updated Nov 20, 2026, 7:47 PM CT). No keys or passwords live in this file. Social stats show "Not connected yet" until those accounts are connected. Publishing and spending stay manual.</p>
       </div>
     </aside>
     <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
@@ -1603,7 +1705,7 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
 
   <footer>
     <span>Oddsaint / Built for your next chapter</span>
-    <span>Example data · No integrations · No automatic publishing</span>
+    <span>Updated Nov 20, 2026, 7:47 PM CT · No automatic publishing</span>
   </footer>
 </div>
 
@@ -1645,7 +1747,7 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
     <button type="button" class="btn-ghost" id="read-details" disabled>Read details aloud</button>
     <button type="button" class="btn-ghost" id="ronnie-mic" hidden aria-pressed="false">Mic</button>
   </div>
-  <p class="talk-note">Quick lines are pre-recorded with ElevenLabs. Live details are shown as text. For a real conversation, use Talk to Ronnie live — those calls use your ElevenLabs credits per minute. She isn't connected to the example agents on this dashboard.</p>
+  <p class="talk-note">Quick lines are pre-recorded with ElevenLabs. Live details are shown as text. For a real conversation, use Talk to Ronnie live — those calls use your ElevenLabs credits per minute.</p>
 </aside>
 
 <div class="ronnie-clip-bank" aria-hidden="true">
@@ -1665,66 +1767,69 @@ body.squad-in-view .ronnie-fab{opacity:0;pointer-events:none;transform:translate
 
 <div id="modal-root"></div>
 <script>
-/* BEGINNER NOTE: Edit this one example-data object to change the sample content.
-   These are fictional business examples, not actual agent activity or revenue. */
-const EXAMPLE_DATA = {
+/* Real data, copied by hand from Lauren's ElevenLabs agents. No API keys live in this file.
+   To refresh: re-pull the counts and drafts and update DASH_DATA and the stamp. */
+const DASH_DATA = {
+  updated: "Nov 20, 2026, 7:47 PM CT",
   host: { name: "Ronnie" },
   agents: [
-    {id:"mollie", name:"Mollie", initial:"M", role:"Business & operations assistant: plans, calendars, captions, and revenue reports.",
+    {id:"ronnie", name:"Ronnie", initial:"R", label:"Ronnie - Oddsaint Host",
+      role:"Your Oddsaint host and royal bestie. AI character. Talks plans, business and hype with you live.",
+      chats7:19, chatsAll:19, lastActive:"Nov 15, 2026, 5:31 PM CT",
       tasks:[
-        {id:"mollie-1", title:"Prepare a weekly business plan", done:false},
-        {id:"mollie-2", title:"Organize the draft library", done:false},
-        {id:"mollie-3", title:"Create an approval checklist", done:true}
+        {id:"ronnie-1", title:"Send feedback on Coi's restaurant video", done:false},
+        {id:"ronnie-2", title:"Decide on Nyx's AI disclosure wording", done:false}
       ]},
-    {id:"planner", name:"Content Planner", initial:"P", role:"Organizes business themes and weekly content calendars. Keeps brands separate.",
+    {id:"roxie", name:"Roxie", initial:"R", label:"Roxie - Quote Pages",
+      role:"Drafts quote cards and captions for THE FREAKQUENCY and Meanwhile, Milan. AI character. You post them yourself.",
+      chats7:12, chatsAll:12, lastActive:"Nov 20, 2026, 6:10 PM CT",
       tasks:[
-        {id:"planner-1", title:"Draft a weekly content calendar", done:true},
-        {id:"planner-2", title:"Outline [brand] themes", done:false},
-        {id:"planner-3", title:"Review the asset checklist", done:false}
+        {id:"roxie-1", title:"Review the Milan \"busy doing nothing\" draft", done:false}
       ]},
-    {id:"writer", name:"Caption Writer", initial:"C", role:"Prepares non-explicit, AI-disclosed draft captions for your review.",
+    {id:"nyx", name:"Nyx", initial:"N", label:"Nyx - After Dark",
+      role:"Drafts Instagram-safe captions for After Hours with Nyx. AI character. You post them yourself.",
+      chats7:6, chatsAll:6, lastActive:"Nov 20, 2026, 10:45 AM CT",
       tasks:[
-        {id:"writer-1", title:"Draft a brand introduction", done:true},
-        {id:"writer-2", title:"Prepare caption variations", done:false},
-        {id:"writer-3", title:"Check AI disclosures", done:false}
-      ]},
-    {id:"reporter", name:"Revenue Reporter", initial:"R", role:"Turns owner-provided numbers into clear reports. Never invents results.",
-      tasks:[
-        {id:"reporter-1", title:"Build a report template", done:true},
-        {id:"reporter-2", title:"Add [reporting period]", done:false},
-        {id:"reporter-3", title:"Wait for pasted numbers", done:false}
+        {id:"nyx-1", title:"Pick Nyx's X handle", done:false},
+        {id:"nyx-2", title:"Pick Nyx's Fanvue name", done:false}
       ]}
   ],
   completed:[
-    {id:"calendar", agent:"planner", title:"Weekly content calendar", date:"[date]", output:"EXAMPLE OUTPUT — not a scheduled calendar.\n[day]: Brand introduction draft.\n[day]: Behind-the-scenes creative concept.\n[day]: Review and organize approved assets.\nAll dates and publishing decisions remain with the owner."},
-    {id:"intro", agent:"writer", title:"AI creator introduction", date:"[date]", output:"EXAMPLE CAPTION — not published.\n“Meet [creator name], an AI-generated creator. A new perspective on [brand theme]. Welcome to the next chapter.”\nReminder: enable the platform’s AI label before posting."},
-    {id:"report", agent:"reporter", title:"Revenue report template", date:"[date]", output:"EXAMPLE TEMPLATE — no real financial results.\nReporting period: [date range]\nRevenue: [owner-provided amount]\nExpenses: [owner-provided amount]\nNet: [calculated after verified inputs]\nNo figures are available until you provide them."}
-  ],
-  approvals:[
-    {id:"checklist", agent:"mollie", title:"Business review checklist", description:"Example: check brand separation, AI labels, and owner approval."},
-    {id:"themes", agent:"planner", title:"Weekly content themes", description:"Example: review [brand] themes before a calendar is finalized."},
-    {id:"captions", agent:"writer", title:"Introduction caption draft", description:"Example: review tone and AI disclosure. No publishing is connected."}
+    {id:"milan-busy", agent:"roxie", title:"Meanwhile, Milan · busy doing nothing", date:"Nov 20, 2026, 6:10 PM CT",
+      output:"DRAFT — Lauren posts. Milan is an AI character.\n\nSLIDE 1 (tweet-style card):\ni'm not ignoring you, i'm just busy doing nothing\n\nSLIDE 2 (follow card):\nyou'll never see me again if you don't follow 💜\n\nCAPTION:\nUnapologetic, undisturbed, and absolutely unavailable. 💅🏼💜\n\nJust in case anyone was wondering why my reply is taking three business days... 🤫📱\n\nBecause apparently being \"busy\" has to mean working, and not staring at the ceiling for two hours.\n\nI'm not saying I don't care about our friendship...\n\nI'm saying if my phone is on \"do not disturb\" and I'm horizontal eating snacks, I am fully booked. 🛌✨\n\nAnd before y'all start, relax. I said I was busy, not dead.\n\nWho else is currently booked and busy doing absolutely nothing? 🙋🏻‍♀️👇🏼\n\nSave this for the day you need a reminder that peace is a priority.\n\nMilan is an AI character.\n\n#MeanwhileMilan #GirlBeSerious #GroupChatEnergy\n\nTurn on Instagram's AI label before you post."},
+    {id:"fq-wyr-exes", agent:"roxie", title:"THE FREAKQUENCY · Would You Rather (exes)", date:"Nov 15, 2026, 5:18 PM CT",
+      output:"DRAFT — Lauren posts. Roxie is an AI character.\n\nCARD: WOULD YOU RATHER?\nA. Spend a long weekend trapped in a cabin with your [toxic ex] who still knows exactly how to make you scream.\nOR\nB. Have your [current partner] find the hidden folder of screenshots you never deleted of your ex.\nFOOTER: YOU CAN'T PICK BOTH.\n\nCAPTION:\nBitch, this is a literal nightmare scenario and I am sweating just typing it. Are we unlocking old toxic core memories or are we burning the whole current relationship to the ground? Choose your fighter and defend your messy self in the comments. Roxie is an AI character.\n\n#TheFreakquency #WouldYouRather #ExDrama #ToxicEx #GroupChatChaos #GrownFolksHumor #AdultHumor\n\nTurn on Instagram's AI label before you post."},
+    {id:"milan-situationship", agent:"roxie", title:"Meanwhile, Milan · situationship", date:"Nov 15, 2026, 4:00 PM CT",
+      output:"DRAFT — Lauren posts. Milan is an AI character.\n\nCARD:\nyou keep calling him confusing because \"he doesn't like me\" sounds too final.\n\nCAPTION:\nStop trying to translate silence, babe. He's not bilingual, he's just not interested. 😭 Tag a friend who needs to hear this. Milan is an AI character.\n\n#MeanwhileMilan #GirlBeSerious #GroupChatEnergy #DatingHumor #SituationshipHumor"},
+    {id:"milan-2am", agent:"roxie", title:"Meanwhile, Milan · texting your ex at 2am", date:"Nov 15, 2026, 4:00 PM CT",
+      output:"DRAFT — Lauren posts. Milan is an AI character.\n\nCARD:\nyou didn't text him at 2:00 a.m. because you missed his personality. you texted him because your standards went into sleep mode.\n\nCAPTION:\nAnd now you're staring at those three dots like your life depends on it. Be serious and go to sleep. 😭 Tag the friend who needs her phone taken.\n\nMilan is an AI character.\n\n#MeanwhileMilan #GirlBeSerious #GroupChatEnergy #DatingHumor #MilanAfterDark"},
+    {id:"nyx-tuesday", agent:"nyx", title:"After Hours with Nyx · Too Expensive for a Tuesday", date:"Nov 15, 2026, 5:11 PM CT",
+      output:"DRAFT — Lauren posts. Nyx is an AI character.\n\nCAPTION:\nDressing up just to walk to the kitchen for midnight espresso. Because Tuesday deserved a little drama.\n\n#TooExpensiveForATuesday #NocturneCity #AfterHours #EclipseHouse #FictionalAI\n\nTurn on the platform's AI label when you post."},
+    {id:"nyx-after-dark", agent:"nyx", title:"After Hours with Nyx · penthouse caption", date:"Nov 15, 2026, 9:19 PM CT",
+      output:"DRAFT — Lauren posts. Nyx is an AI character.\n\nCAPTION:\nSome things just look better after dark.\n\nFictional AI.\n\n#afterhours #eclipsehouse #nocturnecity #moodygram #oddsaint\n\nTurn on Instagram's AI label when you post."}
   ]
 };
+DASH_DATA.approvals = DASH_DATA.completed.map((d) => ({id:"ok-" + d.id, agent:d.agent, title:d.title,
+  description:"Draft — Lauren posts. Written " + d.date + ". Approving only saves a note on this device."}));
 
-const STORAGE_KEY = "oddsaint-royal-state-v1";
+const STORAGE_KEY = "oddsaint-royal-state-v2-real";
 const THEME_KEY = "oddsaint-theme";
 const $ = (id) => document.getElementById(id);
 const escapeHTML = (value) => String(value).replace(/[&<>"']/g, (c) => ({
   "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
 }[c]));
-const agentById = (id) => EXAMPLE_DATA.agents.find((a) => a.id === id);
+const agentById = (id) => DASH_DATA.agents.find((a) => a.id === id);
 const agentName = (id) => (agentById(id) || {name: "[agent]"}).name;
 
-function cloneExampleTasks(){
+function cloneSeedTasks(){
   const tasks = {};
-  EXAMPLE_DATA.agents.forEach((agent) => {
+  DASH_DATA.agents.forEach((agent) => {
     tasks[agent.id] = agent.tasks.map((task) => ({id:task.id, title:task.title, done:!!task.done, custom:false}));
   });
   return tasks;
 }
 function defaultState(){
-  return {tasks: cloneExampleTasks(), decisions: {}};
+  return {tasks: cloneSeedTasks(), decisions: {}};
 }
 function loadState(){
   const fallback = defaultState();
@@ -1733,9 +1838,9 @@ function loadState(){
     if(!raw) return fallback;
     const parsed = JSON.parse(raw);
     if(!parsed || typeof parsed !== "object") return fallback;
-    const tasks = cloneExampleTasks();
+    const tasks = cloneSeedTasks();
     if(parsed.tasks && typeof parsed.tasks === "object"){
-      EXAMPLE_DATA.agents.forEach((agent) => {
+      DASH_DATA.agents.forEach((agent) => {
         const list = parsed.tasks[agent.id];
         if(Array.isArray(list)){
           tasks[agent.id] = list
@@ -1811,16 +1916,16 @@ function openCount(agentId){
 function renderTaskList(agentId, opts){
   const tasks = visibleTasks(agentId);
   const all = agentTasks(agentId);
-  if(!all.length && !searchQuery) return '<p class="empty">No example tasks yet.</p>';
-  if(!tasks.length) return '<p class="empty">No example tasks match this search.</p>';
-  return `<ul class="tasks" aria-label="Example tasks for ${escapeHTML(agentName(agentId))}">${
+  if(!all.length && !searchQuery) return '<p class="empty">No tasks yet.</p>';
+  if(!tasks.length) return '<p class="empty">No tasks match this search.</p>';
+  return `<ul class="tasks" aria-label="Tasks for ${escapeHTML(agentName(agentId))}">${
     tasks.map((task) => `
       <li class="task ${task.done ? "done" : ""}">
         <button class="task-check" type="button" aria-pressed="${task.done}" data-toggle-task="${escapeHTML(agentId)}" data-task-id="${escapeHTML(task.id)}" aria-label="${task.done ? "Mark not done" : "Mark done"}: ${escapeHTML(task.title)}">
           <span class="box" aria-hidden="true">✓</span>
         </button>
         <div class="task-body">
-          <span class="task-title">${escapeHTML(task.title)}<small>Example${task.custom ? " · added on this device" : ""} · ${task.done ? "Done" : "To do"}</small></span>
+          <span class="task-title">${escapeHTML(task.title)}<small>${task.custom ? "Added on this device · " : ""}${task.done ? "Done" : "To do"}</small></span>
         </div>
         <button class="task-del" type="button" data-delete-task="${escapeHTML(agentId)}" data-task-id="${escapeHTML(task.id)}" aria-label="Delete task: ${escapeHTML(task.title)}">×</button>
       </li>
@@ -1830,35 +1935,46 @@ function renderTaskList(agentId, opts){
 
 function renderAddTask(agentId, compact){
   return `<form class="add-task" data-add-task="${escapeHTML(agentId)}">
-    <label class="sr-only" for="add-${escapeHTML(agentId)}${compact ? "-card" : "-modal"}">Add an example task for ${escapeHTML(agentName(agentId))}</label>
-    <input id="add-${escapeHTML(agentId)}${compact ? "-card" : "-modal"}" type="text" maxlength="160" placeholder="Add an example task…" autocomplete="off">
+    <label class="sr-only" for="add-${escapeHTML(agentId)}${compact ? "-card" : "-modal"}">Add a task for ${escapeHTML(agentName(agentId))}</label>
+    <input id="add-${escapeHTML(agentId)}${compact ? "-card" : "-modal"}" type="text" maxlength="160" placeholder="Add a task…" autocomplete="off">
     <button type="submit"${compact ? ' class="btn-ghost"' : ""}>Add</button>
   </form>`;
 }
 
 function render(){
-  const agents = EXAMPLE_DATA.agents.filter((a) => selectedAgent === "all" || a.id === selectedAgent);
-  const completed = EXAMPLE_DATA.completed.filter((item) => {
+  const agents = DASH_DATA.agents.filter((a) => selectedAgent === "all" || a.id === selectedAgent);
+  const completed = DASH_DATA.completed.filter((item) => {
     if(selectedAgent !== "all" && item.agent !== selectedAgent) return false;
     if(!searchQuery) return true;
     return matchQuery(item.title) || matchQuery(item.output) || matchQuery(agentName(item.agent));
   });
-  const approvals = EXAMPLE_DATA.approvals.filter((item) => selectedAgent === "all" || item.agent === selectedAgent);
+  const approvals = DASH_DATA.approvals.filter((item) => selectedAgent === "all" || item.agent === selectedAgent);
   const pending = approvals.filter((item) => !state.decisions[item.id]);
   const decided = approvals.filter((item) => state.decisions[item.id]);
-  const openTasks = EXAMPLE_DATA.agents.reduce((sum, agent) => sum + openCount(agent.id), 0);
+  const openTasks = DASH_DATA.agents.reduce((sum, agent) => sum + openCount(agent.id), 0);
 
   const stats = [
-    [EXAMPLE_DATA.agents.length, "Example agents"],
-    [openTasks, "Open example tasks"],
-    [pending.length, "Example approvals pending"],
-    ["0", "Connected integrations"]
+    [DASH_DATA.agents.reduce((n, a) => n + a.chats7, 0), "Agent chats, last 7 days"],
+    [DASH_DATA.agents.reduce((n, a) => n + a.chatsAll, 0), "Agent chats, all time"],
+    [pending.length, "Drafts waiting on you"],
+    ["0", "Social accounts connected"]
   ];
   $("stats").innerHTML = stats.map(([n, label]) =>
     `<div class="stat"><span class="stat-number">${escapeHTML(String(n))}</span><span class="stat-label">${escapeHTML(label)}</span></div>`
   ).join("");
 
-  $("filters").innerHTML = [{id:"all", name:"All agents"}, ...EXAMPLE_DATA.agents].map((agent) =>
+  const live = $("live-grid");
+  if(live) live.innerHTML = DASH_DATA.agents.map((a) => `<article class="live-card">
+      <h3>${escapeHTML(a.name)}</h3>
+      <div class="live-role">${escapeHTML(a.label)} · AI character</div>
+      <div class="live-nums">
+        <div><b>${a.chats7}</b><small>chats, last 7 days</small></div>
+        <div><b>${a.chatsAll}</b><small>chats, all time</small></div>
+      </div>
+      <p class="live-last">Last active <b>${escapeHTML(a.lastActive)}</b></p>
+    </article>`).join("");
+
+  $("filters").innerHTML = [{id:"all", name:"All agents"}, ...DASH_DATA.agents].map((agent) =>
     `<button class="filter" type="button" data-filter="${agent.id}" aria-pressed="${selectedAgent === agent.id}">${escapeHTML(agent.name)}</button>`
   ).join("");
 
@@ -1875,40 +1991,40 @@ function render(){
             <small class="muted agent-open-hint">View details</small>
           </span>
         </button>
-        <span class="tag">Example</span>
+        <span class="tag">AI character</span>
       </div>
       <p class="description">${escapeHTML(agent.role)}</p>
-      <p class="status">◇ Not connected · <b>${openCount(agent.id)}</b> open example task${openCount(agent.id)===1?"":"s"}</p>
+      <p class="status">● ${agent.chatsAll} ElevenLabs chats · last active ${escapeHTML(agent.lastActive)} · <b>${openCount(agent.id)}</b> open task${openCount(agent.id)===1?"":"s"}</p>
       ${renderTaskList(agent.id, {compact:true})}
       ${renderAddTask(agent.id, true)}
     </article>`;
-  }).join("") || '<p class="empty">No example agents match this search.</p>';
+  }).join("") || '<p class="empty">No agents match this search.</p>';
 
-  $("completed-count").textContent = `${completed.length} example${completed.length===1?"":"s"}`;
+  $("completed-count").textContent = `${completed.length} draft${completed.length===1?"":"s"}`;
   $("completed").innerHTML = completed.length ? completed.map((item) => `
     <article class="work-item">
       <div class="item-top">
         <div>
           <div class="item-title">${escapeHTML(item.title)}</div>
-          <div class="item-meta">Example · ${escapeHTML(agentName(item.agent))} · ${escapeHTML(item.date)}</div>
+          <div class="item-meta">Draft — Lauren posts · ${escapeHTML(agentName(item.agent))} (AI character) · ${escapeHTML(item.date)}</div>
         </div>
         <button class="view btn-ghost" type="button" data-view="${item.id}" aria-expanded="${expanded.has(item.id)}" aria-controls="output-${item.id}">${expanded.has(item.id)?"Hide":"View"}</button>
       </div>
       <div class="output" id="output-${item.id}" ${expanded.has(item.id) ? "" : "hidden"}>${escapeHTML(item.output)}</div>
     </article>
-  `).join("") : '<p class="empty">No example completed work for this filter.</p>';
+  `).join("") : '<p class="empty">No drafts for this filter.</p>';
 
   $("approval-count").textContent = `${pending.length} pending`;
   $("approvals").innerHTML = pending.length ? pending.map((item) => {
     const editing = noteEditor && noteEditor.id === item.id;
     return `<article class="work-item" data-approval="${item.id}">
       <div class="item-title">${escapeHTML(item.title)}</div>
-      <div class="item-meta">Example · ${escapeHTML(agentName(item.agent))}</div>
+      <div class="item-meta">${escapeHTML(agentName(item.agent))} (AI character)</div>
       <p class="item-meta">${escapeHTML(item.description)}</p>
       ${editing ? `
         <form class="note-editor" data-note-form="${item.id}">
           <label class="sr-only" for="note-${item.id}">Optional note</label>
-          <textarea id="note-${item.id}" maxlength="400" placeholder="Optional note (example only)…">${escapeHTML(noteEditor.draft)}</textarea>
+          <textarea id="note-${item.id}" maxlength="400" placeholder="Optional note (saved on this device)…">${escapeHTML(noteEditor.draft)}</textarea>
           <div class="approval-actions">
             <button type="submit" class="${noteEditor.kind === "rejected" ? "btn-reject" : "btn-changes"}">Confirm ${noteEditor.kind === "rejected" ? "rejection" : "request"}</button>
             <button type="button" class="btn-ghost" data-cancel-note>Cancel</button>
@@ -1922,7 +2038,7 @@ function render(){
         </div>
       `}
     </article>`;
-  }).join("") : '<p class="empty">No example approvals waiting.</p>';
+  }).join("") : '<p class="empty">No drafts waiting on you.</p>';
 
   $("decided").innerHTML = decided.length ? `<div class="decided-wrap">
     <h3>Decided on this device</h3>
@@ -1931,8 +2047,8 @@ function render(){
       const label = d.status === "approved" ? "Approved" : d.status === "changes" ? "Changes requested" : "Rejected";
       return `<article class="work-item">
         <div class="item-title">${escapeHTML(item.title)}</div>
-        <div class="item-meta">Example · ${escapeHTML(agentName(item.agent))}</div>
-        <p class="decision ${escapeHTML(d.status)}">${escapeHTML(label)} — local example only${d.note ? `. Note: ${escapeHTML(d.note)}` : ""}</p>
+        <div class="item-meta">${escapeHTML(agentName(item.agent))} (AI character)</div>
+        <p class="decision ${escapeHTML(d.status)}">${escapeHTML(label)} — saved on this device only${d.note ? `. Note: ${escapeHTML(d.note)}` : ""}</p>
         <button type="button" class="btn-ghost" data-undo="${item.id}">Undo</button>
       </article>`;
     }).join("")}</div>
@@ -1951,30 +2067,30 @@ function renderModal(){
   }
   const agent = agentById(openAgentId);
   if(!agent){ openAgentId = null; root.innerHTML = ""; return; }
-  const recent = EXAMPLE_DATA.completed.filter((item) => item.agent === agent.id);
+  const recent = DASH_DATA.completed.filter((item) => item.agent === agent.id);
   document.body.style.overflow = "hidden";
   root.innerHTML = `<div class="modal-backdrop" data-close-modal>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
       <div class="modal-head">
         <div>
-          <div class="eyebrow">Example agent</div>
+          <div class="eyebrow">AI character · ElevenLabs agent</div>
           <h2 id="modal-title">${escapeHTML(agent.name)}</h2>
         </div>
         <button type="button" class="modal-close" data-close-modal aria-label="Close details">Close</button>
       </div>
       <p class="description">${escapeHTML(agent.role)}</p>
-      <p class="status">◇ Not connected · Example data only</p>
+      <p class="status">● ${agent.chats7} chats in the last 7 days · ${agent.chatsAll} all time · last active ${escapeHTML(agent.lastActive)} · updated ${escapeHTML(DASH_DATA.updated)}</p>
       <h3 style="margin:16px 0 8px">Tasks</h3>
       ${renderTaskList(agent.id, {compact:false})}
       ${renderAddTask(agent.id, false)}
-      <h3 style="margin:20px 0 8px">Recent example work</h3>
+      <h3 style="margin:20px 0 8px">Recent drafts</h3>
       ${recent.length ? recent.map((item) => `
         <article class="work-item">
           <div class="item-title">${escapeHTML(item.title)}</div>
-          <div class="item-meta">Example · ${escapeHTML(item.date)}</div>
+          <div class="item-meta">Draft — Lauren posts · ${escapeHTML(item.date)}</div>
           <div class="output">${escapeHTML(item.output)}</div>
         </article>
-      `).join("") : '<p class="empty">No example completed work for this agent yet.</p>'}
+      `).join("") : '<p class="empty">No drafts from this agent yet.</p>'}
     </div>
   </div>`;
   const dialog = root.querySelector(".modal");
@@ -1998,7 +2114,7 @@ function addTask(agentId, title){
   if(!state.tasks[agentId]) state.tasks[agentId] = [];
   state.tasks[agentId].push({id:newTaskId(), title:clean, done:false, custom:true});
   saveState();
-  announce("Example task added on this device. Nothing was sent.");
+  announce("Task added on this device. Nothing was sent.");
   render();
 }
 
@@ -2007,14 +2123,14 @@ function toggleTask(agentId, taskId){
   if(!task) return;
   task.done = !task.done;
   saveState();
-  announce(task.done ? "Example task marked done." : "Example task marked not done.");
+  announce(task.done ? "Task marked done." : "Task marked not done.");
   render();
 }
 
 function deleteTask(agentId, taskId){
   state.tasks[agentId] = agentTasks(agentId).filter((t) => t.id !== taskId);
   saveState();
-  announce("Example task deleted on this device.");
+  announce("Task deleted on this device.");
   render();
 }
 
@@ -2023,7 +2139,7 @@ function decide(id, status, note){
   noteEditor = null;
   saveState();
   const label = status === "approved" ? "Approved" : status === "changes" ? "Changes requested" : "Rejected";
-  announce(label + ". Prototype only; nothing sent or posted.");
+  announce(label + ". Saved on this device; nothing sent or posted.");
   lastFocusSelector = `[data-undo="${id}"]`;
   render();
 }
@@ -2036,15 +2152,15 @@ function undoDecision(id){
   render();
 }
 
-function resetExampleData(){
-  const ok = window.confirm("Reset example data on this device? Added tasks and approval decisions will be cleared. The theme stays as it is.");
+function resetMyTasks(){
+  const ok = window.confirm("Reset tasks on this device? Added tasks and approval notes will be cleared. The theme stays as it is.");
   if(!ok) return;
   state = defaultState();
   noteEditor = null;
   searchQuery = "";
   $("task-search").value = "";
   try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
-  announce("Example data reset on this device.");
+  announce("Tasks reset on this device.");
   render();
 }
 
@@ -2072,7 +2188,7 @@ $("theme-toggle").addEventListener("click", () => {
   setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
 });
 
-$("reset-data").addEventListener("click", resetExampleData);
+$("reset-data").addEventListener("click", resetMyTasks);
 
 $("task-search").addEventListener("input", (event) => {
   searchQuery = event.target.value.trim().toLowerCase();
@@ -2209,17 +2325,17 @@ let lastDetailsText = "";
 window.__ronnieSpeakCalls = [];
 
 function dashboardSnapshot(){
-  const openTasks = EXAMPLE_DATA.agents.reduce((sum, agent) => sum + openCount(agent.id), 0);
-  const pending = EXAMPLE_DATA.approvals.filter((item) => !state.decisions[item.id]);
-  const decided = EXAMPLE_DATA.approvals.filter((item) => state.decisions[item.id]);
-  const openList = EXAMPLE_DATA.agents.map((agent) => ({
+  const openTasks = DASH_DATA.agents.reduce((sum, agent) => sum + openCount(agent.id), 0);
+  const pending = DASH_DATA.approvals.filter((item) => !state.decisions[item.id]);
+  const decided = DASH_DATA.approvals.filter((item) => state.decisions[item.id]);
+  const openList = DASH_DATA.agents.map((agent) => ({
     name: agent.name,
     tasks: agentTasks(agent.id).filter((task) => !task.done)
   })).filter((row) => row.tasks.length);
-  const doneList = EXAMPLE_DATA.agents.flatMap((agent) =>
+  const doneList = DASH_DATA.agents.flatMap((agent) =>
     agentTasks(agent.id).filter((task) => task.done).map((task) => ({agent: agent.name, title: task.title}))
   );
-  return {openTasks, pending, decided, openList, doneList, completed: EXAMPLE_DATA.completed};
+  return {openTasks, pending, decided, openList, doneList, completed: DASH_DATA.completed};
 }
 
 function plural(n, word){
@@ -2229,8 +2345,8 @@ function plural(n, word){
 function detailsFor(intent){
   const snap = dashboardSnapshot();
   if(intent === "greet"){
-    return "Live from your example dashboard: " +
-      plural(snap.pending.length, "approval") + " waiting and " +
+    return "From your dashboard (updated " + DASH_DATA.updated + "): " +
+      plural(snap.pending.length, "draft") + " waiting and " +
       plural(snap.openTasks, "open task") + ".";
   }
   if(intent === "waiting"){
@@ -2241,14 +2357,14 @@ function detailsFor(intent){
     const work = snap.completed.map((item) => item.title + ", from " + agentName(item.agent));
     const tasks = snap.doneList.map((item) => item.title + " for " + item.agent);
     const parts = [];
-    if(work.length) parts.push("Completed example work: " + work.join("; ") + ".");
-    if(tasks.length) parts.push("Checked-off example tasks: " + tasks.join("; ") + ".");
-    if(!parts.length) return "Nothing is marked done on this example dashboard yet.";
+    if(work.length) parts.push("Real drafts: " + work.join("; ") + ".");
+    if(tasks.length) parts.push("Checked-off tasks: " + tasks.join("; ") + ".");
+    if(!parts.length) return "Nothing is marked done yet.";
     return parts.join(" ");
   }
   if(intent === "tasks"){
     if(!snap.openList.length){
-      return "Every example task is checked off, Queen Lauren. Your list is clear.";
+      return "Every task is checked off, Queen Lauren. Your list is clear.";
     }
     return snap.openList.map((row) =>
       row.name + ": " + row.tasks.map((task) => task.title).join(", ")
